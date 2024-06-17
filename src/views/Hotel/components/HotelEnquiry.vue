@@ -164,6 +164,9 @@ const value2 = ref('')
 </template>
 
 <style lang="scss" scoped>
+.mycontainer ::v-deep .el-form-item__label {
+  color: #fff;
+}
 .hotel-search {
   display: flex;
   justify-content: end;

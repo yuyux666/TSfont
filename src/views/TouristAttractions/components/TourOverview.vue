@@ -1,4 +1,3 @@
-s
 <script setup>
 import SceneItem from '@/views/Common/SceneItem.vue'
 import ScenePanel from '@/views/Common/ScenePanel.vue'

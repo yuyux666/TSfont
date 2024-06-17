@@ -30,26 +30,37 @@ defineProps({
   background-color: transparent;
   margin: 10px;
   padding: 10px;
-
-  .head {
-    padding: 40px 0;
+  .container {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    width: 100%;
+    // justify-content: space-between;
+    .head {
+      padding: 40px 0;
+      display: flex;
+      align-items: flex-end;
 
-    h3 {
-      flex: 1;
-      font-size: 32px;
-      font-weight: normal;
-      margin-left: 6px;
-      height: 35px;
-      line-height: 35px;
-      color: aqua;
+      h3 {
+        flex: 1;
+        font-size: 32px;
+        font-weight: normal;
+        margin-left: 6px;
+        height: 35px;
+        line-height: 35px;
+        color: aqua;
 
-      small {
-        font-size: 16px;
-        color: #ffffff;
-        margin-left: 20px;
+        small {
+          font-size: 16px;
+          color: #ffffff;
+          margin-left: 20px;
+        }
       }
+    }
+    .mainter {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      // gap: 1450px;
     }
   }
 }

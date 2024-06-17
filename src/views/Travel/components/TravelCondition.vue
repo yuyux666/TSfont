@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-  <div>路况</div>
+  <div class="mycontainer"></div>
 </template>
 
 <style lang="scss" scoped></style>
