@@ -3,6 +3,7 @@
 <template>
   <nav class="app-topnav">
     <div class="container">
+      <span class="weather">四姑娘山：28°</span>
       <ul>
         <template v-if="true">
           <li>
@@ -40,6 +41,15 @@
     rgb(21, 3, 34),
     #122a3c
   ); /* 从左到右的渐变色 */
+  .container {
+    position: relative;
+    .weather {
+      position: absolute;
+      top: 17px;
+      // left: 20px;
+      color: #fff;
+    }
+  }
   ul {
     display: flex;
     height: 53px;

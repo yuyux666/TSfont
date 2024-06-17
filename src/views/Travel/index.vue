@@ -20,10 +20,7 @@
           <el-icon><Management /></el-icon>
           <span>旅游路线</span>
         </el-menu-item>
-        <el-menu-item index="/main/travel/travelWeather">
-          <el-icon><Management /></el-icon>
-          <span>天气</span>
-        </el-menu-item>
+
         <el-menu-item index="/main/travel/travelCondition">
           <el-icon><Management /></el-icon>
           <span>路况</span>

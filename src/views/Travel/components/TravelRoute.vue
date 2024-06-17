@@ -1,27 +1,12 @@
 <script setup>
-import { Search } from '@element-plus/icons-vue'
-import { ref } from 'vue'
-const input = ref('')
+import SearchPanel from '@/views/Common/SearchPanel.vue'
 </script>
 <template>
   <div class="mycontainer">
     <div class="search">
-      <el-input
-        v-model="input"
-        style="width: 240px"
-        placeholder="搜索路线..."
-      />
-      <el-button type="primary" :icon="Search"></el-button>
+      <SearchPanel title="路线"></SearchPanel>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
-.mycontainer {
-  .search {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

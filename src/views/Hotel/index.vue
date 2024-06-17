@@ -16,13 +16,9 @@
         router
         text-color="#fff"
       >
-        <el-menu-item index="/main/hotel/hotelStar">
+        <el-menu-item index="/main/hotel/hotelEnquiry">
           <el-icon><Management /></el-icon>
-          <span>星级酒店</span>
-        </el-menu-item>
-        <el-menu-item index="/main/hotel/hotelNonStar">
-          <el-icon><Management /></el-icon>
-          <span>非星级酒店</span>
+          <span>酒店住宿</span>
         </el-menu-item>
         <el-menu-item index="/main/hotel/hotelReserve">
           <el-icon><Management /></el-icon>

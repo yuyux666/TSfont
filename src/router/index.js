@@ -64,11 +64,7 @@ const router = createRouter({
               component: () =>
                 import('@/views/Travel/components/TravelRoute.vue')
             },
-            {
-              path: 'travelWeather',
-              component: () =>
-                import('@/views/Travel/components/TravelWeather.vue')
-            },
+
             {
               path: 'travelCondition',
               component: () =>
@@ -100,17 +96,14 @@ const router = createRouter({
         {
           path: 'hotel',
           component: Hotel,
-          redirect: '/main/hotel/hotelStar',
+          redirect: '/main/hotel/hotelEnquiry',
           children: [
             {
-              path: 'hotelStar',
-              component: () => import('@/views/Hotel/components/HotelStar.vue')
-            },
-            {
-              path: 'hotelNonStar',
+              path: 'hotelEnquiry',
               component: () =>
-                import('@/views/Hotel/components/HotelNonStar.vue')
+                import('@/views/Hotel/components/HotelEnquiry.vue')
             },
+
             {
               path: 'hotelReserve',
               component: () =>
