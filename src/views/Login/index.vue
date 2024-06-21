@@ -1,21 +1,28 @@
 <script setup>
-import { User, Lock } from '@element-plus/icons-vue'
+import { User, Lock, Iphone, Phone } from '@element-plus/icons-vue'
 
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, watch, reactive } from 'vue'
+// import { useRouter } from 'vue-router'
+import { onUnmounted } from 'vue'
+// import { ElMessage } from 'element-plus'
 
-const router = useRouter()
+// const router = useRouter()
 
 const isRegister = ref(false) // true注册
 // 登录
-const form = ref({})
+const formRef = ref({})
 
 // 注册
 // 整个用于提交的form数据对象
-const formModel = ref({
+let formModel = reactive({
   username: '',
   password: '',
-  repassword: ''
+  repassword: '',
+  phoneNumber: '',
+  picPhonecode: '',
+  totalSecond: 60,
+  second: 60, // 当前秒数
+  timer: null // 定时器id
 })
 // 整个表单的校验规则
 // 每一条规则都是一个对象
@@ -44,7 +51,7 @@ const rules = {
     },
     {
       validator: (rules, value, callback) => {
-        if (value !== formModel.value.password) {
+        if (value !== formModel.password) {
           callback(new Error('两次输入的密码不一致'))
         } else {
           // 校验成功，需要callback
@@ -52,20 +59,71 @@ const rules = {
         }
       }
     }
+  ],
+  phoneNumber: [
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+  ],
+  picPhonecode: [
+    { required: true, message: '请输入验证码', trigger: 'blur' },
+    { pattern: /^\d{6}$/, message: '验证码必须是6位数字', trigger: 'blur' }
   ]
 }
 
 // 切换时重置
 watch(isRegister, () => {
-  formModel.value = {
+  formModel = reactive({
     username: '',
     password: '',
-    repassword: ''
-  }
+    repassword: '',
+    phoneNumber: '',
+    picPhonecode: '',
+    totalSecond: 60,
+    second: formModel.second, // 当前秒数
+    timer: null // 定时器id
+  })
 })
-const login = () => {
-  // 跳转到首页
-  router.push('/home')
+
+// 发送验证码
+const getCode = () => {
+  console.log(formModel)
+  if (formModel.second === formModel.totalSecond) {
+    // 开始倒计时
+    formModel.second = formModel.totalSecond
+    formModel.timer = setInterval(() => {
+      if (formModel.second > 0) {
+        formModel.second--
+      } else {
+        clearInterval(formModel.timer)
+        formModel.second = 60
+        formModel.timer = null
+      }
+    }, 1000)
+  }
+}
+// 在组件卸载时清除定时器
+const clearTimer = () => {
+  if (formModel.timer) {
+    clearInterval(formModel.timer)
+    formModel.timer = null
+  }
+}
+onUnmounted(clearTimer)
+// 注册按钮
+const register = async () => {
+  await formRef.value.validate()
+  // 发送注册接口请求
+
+  isRegister.value = false
+}
+const login = async () => {
+  // 对表单进行校验
+  // await formRef.value.validate()
+  // 发送登录接口请求
+  //设置pinia用户token
+  // ElMessage.success('11111')
+  // 登录成功后跳转到首页
+  // router.push('/')
 }
 </script>
 
@@ -80,7 +138,7 @@ const login = () => {
       <el-form
         :model="formModel"
         :rules="rules"
-        ref="form"
+        ref="formRef"
         size="large"
         autocomplete="off"
         v-if="isRegister"
@@ -108,8 +166,35 @@ const login = () => {
             v-model="formModel.repassword"
             :prefix-icon="Lock"
             type="password"
-            placeholder="请输入再次密码"
+            placeholder="请再次输入密码"
           ></el-input>
+        </el-form-item>
+        <el-form-item prop="phoneNumber">
+          <el-input
+            v-model="formModel.phoneNumber"
+            :prefix-icon="Iphone"
+            placeholder="请输入手机号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item prop="picPhonecode">
+          <el-input
+            v-model="formModel.picPhonecode"
+            :prefix-icon="Phone"
+            placeholder="请输入验证码"
+            ><template #append
+              ><el-button
+                @click="getCode"
+                :disabled="formModel.second !== formModel.totalSecond"
+                type="primary"
+              >
+                {{
+                  formModel.second === formModel.totalSecond
+                    ? '获取验证码'
+                    : formModel.second + '秒后重新发送'
+                }}
+              </el-button></template
+            ></el-input
+          >
         </el-form-item>
         <el-form-item>
           <el-button
@@ -123,7 +208,12 @@ const login = () => {
         </el-form-item>
 
         <el-form-item class="flex">
-          <el-link type="info" :underline="false" @click="isRegister = false">
+          <el-link
+            type="info"
+            :underline="false"
+            @click="isRegister = false"
+            style="color: #fff"
+          >
             ← 返回
           </el-link>
         </el-form-item>
@@ -132,7 +222,7 @@ const login = () => {
       <el-form
         :model="formModel"
         :rules="rules"
-        ref="form"
+        ref="formRef"
         size="large"
         autocomplete="off"
         v-else
@@ -159,7 +249,7 @@ const login = () => {
 
         <el-form-item class="flex">
           <div class="flex">
-            <el-checkbox>记住我</el-checkbox>
+            <el-checkbox style="color: #fff">记住我</el-checkbox>
             <el-link type="primary" :underline="false">忘记密码？</el-link>
           </div>
         </el-form-item>
@@ -173,7 +263,12 @@ const login = () => {
           >
         </el-form-item>
         <el-form-item class="flex">
-          <el-link type="info" :underline="false" @click="isRegister = true">
+          <el-link
+            type="info"
+            :underline="false"
+            @click="isRegister = true"
+            style="color: #fff"
+          >
             注册 →
           </el-link>
         </el-form-item>
@@ -185,7 +280,12 @@ const login = () => {
 <style lang="scss" scoped>
 .login-page {
   height: 100vh;
-  background-color: #fff;
+  background: linear-gradient(
+    to bottom,
+
+    rgb(21, 3, 34),
+    #122a3c
+  );
 
   /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
   @font-face {
@@ -225,10 +325,22 @@ const login = () => {
     }
   }
   .form {
+    height: 600px;
+
+    margin-top: 100px;
+    border-radius: 10px;
+    padding: 30px;
+    background-color: transparent;
+    color: $xtxColor;
     display: flex;
     flex-direction: column;
     justify-content: center;
     user-select: none;
+    transition: 0.5s;
+
+    &:hover {
+      box-shadow: 1px 6px 10px rgba(248, 247, 167, 0.897);
+    }
     .title {
       margin: 0 auto;
     }

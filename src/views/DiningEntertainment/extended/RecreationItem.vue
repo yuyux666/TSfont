@@ -1,6 +1,6 @@
 <script setup>
 defineProps({
-  performance: {
+  entertainment: {
     type: Object,
     default: () => {}
   }
@@ -8,21 +8,21 @@ defineProps({
 </script>
 
 <template>
-  <div class="performance-item">
-    <img v-img-lazy="performance.picture" alt="" />
-    <p class="name ellipsis">{{ performance.performance_name }}</p>
+  <div class="entertainment-item">
+    <img v-img-lazy="entertainment.picture" alt="" />
+    <p class="name ellipsis">{{ entertainment.project_name }}</p>
 
     <div class="content">
-      <p class="type ellipsis">演出类型：{{ performance.performance_type }}</p>
-      <p class="team-name ellipsis">团体组织：{{ performance.group_name }}</p>
-      <p class="address ellipsis">
-        地址：{{ performance.performance_location }}
+      <p class="address ellipsis">地址：{{ entertainment.project_location }}</p>
+      <p class="address ellipsis">描述：{{ entertainment.description }}</p>
+      <p class="avg_consumption ellipsis">
+        平均消费：{{ entertainment.avg_consumption }}元
       </p>
-      <span class="price">门票价格：{{ performance.ticket_price }}元</span>
+      <span class="price">门票价格：{{ entertainment.ticket_price }}元</span>
       <span class="time">
         <p>
-          营业时间{{ performance.performance_start }}~{{
-            performance.performance_end
+          营业时间{{ entertainment.entertainment_start }}~{{
+            entertainment.entertainment_end
           }}
           | 营业中
         </p>
@@ -32,7 +32,7 @@ defineProps({
 </template>
 
 <style scoped lang="scss">
-.performance-item {
+.entertainment-item {
   display: block;
   // border: 1px solid aqua;
 
@@ -70,7 +70,7 @@ defineProps({
     .type {
       color: #fff;
     }
-    .team-name {
+    .avg_consumption {
       color: #fff;
     }
 

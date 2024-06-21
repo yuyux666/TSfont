@@ -11,19 +11,23 @@ defineProps({
   <div class="restaurant-item">
     <img v-img-lazy="restaurant.picture" alt="" />
     <p class="name ellipsis">{{ restaurant.store_name }}</p>
-    <p class="address ellipsis">地址：{{ restaurant.tore_location }}</p>
-    <p class="desc ellipsis">{{ restaurant.description }}</p>
-    <span class="price">平均消费：{{ restaurant.avg_consumption }}元</span>
-    <span class="time">
-      <p>营业时间{{ restaurant.opentime }}~{{ restaurant.endtime }} | 营业中</p>
-    </span>
+
+    <div class="content">
+      <p class="address ellipsis">地址：{{ restaurant.tore_location }}</p>
+      <span class="price">平均消费：{{ restaurant.avg_consumption }}元</span>
+      <p class="desc ellipsis">{{ restaurant.description }}</p>
+      <span class="time">
+        <p>
+          营业时间{{ restaurant.opentime }}~{{ restaurant.endtime }} | 营业中
+        </p>
+      </span>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .restaurant-item {
   display: block;
-  background-color: rgba(241, 243, 249, 0.756);
   // border: 1px solid aqua;
 
   border-radius: 10px;
@@ -39,41 +43,50 @@ defineProps({
   }
 
   img {
-    width: 250px;
-    height: 170px;
+    width: 280px;
+    height: 180px;
     border-radius: 10px;
-    border: 1px solid #fffed7;
+    border: 1px solid rgb(124, 209, 230);
   }
-
-  p {
-    padding-top: 10px;
-  }
-
   .name {
+    padding-top: 10px;
     font-size: 20px;
-    color: #ffffff;
+    color: rgb(124, 209, 230);
   }
-  .address {
-    font-size: 15px;
-    color: #ffffff;
-  }
-  .desc {
-    display: block;
-    color: #ffffff;
-    display: -webkit-box;
-    min-height: 60px;
-    -webkit-line-clamp: 2; //示例值，表示最多显示3行
-    -webkit-box-orient: vertical;
-  }
-  .price {
-    display: block;
-    color: #eb6e21;
-    // line-height: 100%;
-    height: 30px;
-    font-size: 20px;
+  .content {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: 50px;
+    justify-content: space-between;
+    p {
+      padding-top: 10px;
+    }
+
+    .address {
+      // font-size: 15px;
+      color: #ffffff;
+    }
+    .desc {
+      display: block;
+      color: #ffffff;
+      display: -webkit-box;
+      min-height: 50px;
+      max-width: 250px;
+      -webkit-line-clamp: 2; //示例值，表示最多显示3行
+      -webkit-box-orient: vertical;
+    }
+    .price {
+      padding-top: 4px;
+      display: block;
+      color: $priceColor;
+      // line-height: 100%;
+      height: 30px;
+      font-size: 20px;
+    }
   }
   .time {
-    color: #fff;
+    color: rgb(124, 209, 230);
   }
   .isopen {
     color: #fff;

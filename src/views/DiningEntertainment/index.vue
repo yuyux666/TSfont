@@ -24,6 +24,10 @@
           <el-icon><Management /></el-icon>
           <span>演出</span>
         </el-menu-item>
+        <el-menu-item index="/main/diningEntertainment/recreation">
+          <el-icon><Management /></el-icon>
+          <span>娱乐</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>

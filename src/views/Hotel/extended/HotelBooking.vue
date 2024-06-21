@@ -1,168 +1,173 @@
 <script setup>
-import { ref } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
-import { QuillEditor } from '@vueup/vue-quill'
 import { ElMessage } from 'element-plus'
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import {
-  artEditService,
-  artGetDetailService,
-  artPublishService
-} from '@/api/article'
-import { baseURL } from '@/utils/request'
-import axios from 'axios'
+import { ref, watch } from 'vue'
 
 const visibleDrawer = ref(false)
 
-// 准备数据
-const defaulrForm = {
-  title: '',
-  cate_id: '',
-  cover_img: '',
-  content: '',
-  state: ''
+const BookingForm = {
+  hotel_name: '', // 酒店名
+  occupier_name: '', // 预定人姓名
+  occupier_phone: '', // 预定人电话
+  room_num: '', // 房间数量
+  room_id: '0', // 房型
+  hotel_price: '120',
+  cost: '', // 金额
+  checkin_time: '', // 入住时间
+  checkout_time: '', // 退房时间
+  status: ''
 }
 const formModel = ref({
-  ...defaulrForm
+  ...BookingForm,
+  datetimeRange: []
 })
-
-// 图片上传相关逻辑
-const imageUrl = ref('')
-const onSelectFile = (uploadFile) => {
-  // 拿到上传的文件
-  imageUrl.value = URL.createObjectURL(uploadFile.raw) // 配置地址
-  //将图片对象存入数据里便于将来提交
-  formModel.value.cover_img = uploadFile.raw
-}
-const emit = defineEmits(['success'])
-
-const onPublish = async (state) => {
-  // 将状态存入
-  formModel.value.state = state
-  //请求接口需要formData对象，需要将普通对象转换成formData对象
-  const fd = new FormData()
-  for (let key in formModel.value) {
-    fd.append(key, formModel.value[key])
-  }
-  //发请求
-  if (formModel.value.id) {
-    // 编辑操作
-    await artEditService(fd)
-    ElMessage.success('修改成功！')
-    visibleDrawer.value = false
-    // 通知父组件修改成功
-    emit('success', 'edit')
-  } else {
-    // 添加操作
-    await artPublishService(fd)
-    ElMessage.success('添加成功！')
-    visibleDrawer.value = false
-    // 通知父组件添加成功
-    emit('success', 'add')
-  }
-}
-
-const editorRef = ref()
-
-// 暴露open方法给父组件
-const open = async (row) => {
-  visibleDrawer.value = true
-  if (row.id) {
-    // 编辑
-    const res = await artGetDetailService(row.id)
-    //拿到请求后的数据，对数据进行回显，封面需要额外操作
-    // 注意1: cover_img的值, 需要自己拼接服务器前缀地址, 和接口服务的基地址相同
-    formModel.value = res.data.data
-    imageUrl.value = baseURL + formModel.value.cover_img
-    // 提交给后台，需要的是 file 格式的，将网络图片，转成 file 格式
-    // 网络图片转成 file 对象, 需要转换一下，将来便于提交
-    const file = await imageUrlToFile(imageUrl.value, formModel.value.cover_img)
-    formModel.value.cover_img = file
-  } else {
-    // 添加,首先基于默认的数据，重置form数据
-    formModel.value = {
-      ...defaulrForm
+const rules = {
+  occupier_name: [
+    { required: true, message: '请输入预定人姓名', trigger: 'blur' },
+    {
+      pattern: /^[\u4e00-\u9fa5]{2,4}$/,
+      message: '请输入正确的姓名',
+      trigger: 'blur'
     }
-    // 还需要重置图片和富文本编辑器
-    imageUrl.value = ''
-    editorRef.value.setHtml('')
-  }
+  ],
+  occupier_phone: [
+    { required: true, message: '请输入预定人电话', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
+  ],
+
+  checkin_time: [
+    { required: true, message: '请输入入住时间', trigger: 'blur' }
+  ],
+  checkout_time: [
+    { required: true, message: '请输入退房时间', trigger: 'blur' }
+  ]
 }
-// 将网络图片地址转换为File对象
-async function imageUrlToFile(url, fileName) {
-  try {
-    // 第一步：使用axios获取网络图片数据
-    const response = await axios.get(url, { responseType: 'arraybuffer' })
-    const imageData = response.data
-
-    // 第二步：将图片数据转换为Blob对象
-    const blob = new Blob([imageData], {
-      type: response.headers['content-type']
-    })
-
-    // 第三步：创建一个新的File对象
-    const file = new File([blob], fileName, { type: blob.type })
-
-    return file
-  } catch (error) {
-    console.error('将图片转换为File对象时发生错误:', error)
-    throw error
+watch(
+  () => formModel.value.room_num,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      formModel.value.cost = formModel.value.hotel_price * newValue
+    }
   }
+)
+const open = () => {
+  visibleDrawer.value = true
 }
-
+const centerDialogVisible = ref(false)
+const submitForm = () => {
+  // 提交表单前，将日期范围的值分别赋值给 checkin_time 和 checkout_time
+  if (formModel.value.datetimeRange.length === 2) {
+    formModel.value.checkin_time = formModel.value.datetimeRange[0]
+    formModel.value.checkout_time = formModel.value.datetimeRange[1]
+    // 然后你可以继续执行表单提交的逻辑...
+  }
+  centerDialogVisible.value = true
+  ElMessage.success('支付成功！')
+  visibleDrawer.value = false
+}
+const close = () => {
+  console.log(formModel.value.datetimeRange)
+}
 defineExpose({ open })
 </script>
 
 <template>
   <el-drawer
     v-model="visibleDrawer"
-    :title="formModel.id ? '编辑文章' : '添加文章'"
+    title="酒店预订"
     direction="rtl"
     size="50%"
+    style="background-color: #122a3c; color: #fff"
   >
-    <!-- 发表文章表单 -->
-    <el-form :model="formModel" ref="formRef" label-width="100px">
-      <el-form-item label="文章标题" prop="title">
-        <el-input v-model="formModel.title" placeholder="请输入标题"></el-input>
+    <!-- 酒店预订表单 -->
+    <el-form
+      :model="formModel"
+      ref="formRef"
+      label-width="120px"
+      :rules="rules"
+      class="hotelBooking"
+    >
+      <el-form-item label="酒店名称">
+        <el-input
+          v-model="formModel.hotel_name"
+          placeholder="四姑娘山宾馆"
+          disabled
+        ></el-input>
       </el-form-item>
-      <el-form-item label="文章分类" prop="cate_id">
-        <channel-select
-          v-model="formModel.cate_id"
-          width="100%"
-        ></channel-select>
+      <el-form-item label="房间数量" prop="room_num">
+        <el-input-number v-model="formModel.room_num" :min="1" />
       </el-form-item>
-      <el-form-item label="文章封面" prop="cover_img">
-        <!-- 文件上传：需要关闭el的自动上传功能(:auto-upload)，不需要配置action等参数
-        只需要前端的本地预览工作，无需在提交前上传图标
-        语法：URL.createObjectURL(...) -->
-        <el-upload
-          class="avatar-uploader"
-          :show-file-list="false"
-          :auto-upload="false"
-          :on-change="onSelectFile"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
+      <el-form-item label="房型">
+        <el-select v-model="formModel.room_id">
+          <el-option label="大床房" value="0"></el-option>
+          <el-option label="双床房" value="1"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="文章内容" prop="content">
-        <div class="editor">
-          <QuillEditor
-            ref="editorRef"
-            v-model:content="formModel.content"
-            content-type="html"
-            theme="snow"
-          ></QuillEditor>
-        </div>
+      <el-form-item label="入住及退房时间">
+        <el-date-picker
+          v-model="formModel.datetimeRange"
+          value-format="YYYY-MM-DD"
+          @change="close"
+          type="daterange"
+          range-separator="To"
+          start-placeholder="Start date"
+          end-placeholder="End date"
+          size="default"
+        />
+      </el-form-item>
+
+      <el-form-item label="预定人姓名" prop="occupier_name">
+        <el-input v-model="formModel.occupier_name"></el-input>
+      </el-form-item>
+      <el-form-item label="预定人电话" prop="occupier_phone">
+        <el-input v-model="formModel.occupier_phone"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="onPublish('已发布')" type="primary">发布</el-button>
-        <el-button @click="onPublish('草稿')" type="info">草稿</el-button>
+        <span
+          >共<span class="reserve-price">{{ formModel.cost }}</span
+          >元</span
+        >
+      </el-form-item>
+      <el-form-item>
+        <div>
+          <el-button
+            type="primary"
+            style="color: #122a3c"
+            @click="submitForm"
+            plain
+            >直接支付</el-button
+          >
+        </div>
       </el-form-item>
     </el-form>
   </el-drawer>
+  <!-- 支付弹窗 -->
+  <div class="pay">
+    <el-dialog
+      v-model="centerDialogVisible"
+      title="支付确认"
+      width="500"
+      align-center
+    >
+      <span>确定支付？</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="centerDialogVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="centerDialogVisible = false">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 <style lang="scss" scoped>
+::v-deep .el-form-item__label {
+  color: #fff;
+  margin-right: 10px;
+}
+.el-form-item {
+  margin-bottom: 30px; /* 根据需要调整间隔大小 */
+}
 .avatar-uploader {
   :deep() {
     .avatar {
@@ -195,5 +200,34 @@ defineExpose({ open })
   :deep(.ql-editor) {
     min-height: 200px;
   }
+}
+.reserve-price {
+  padding: 20px;
+  font-size: 20px;
+}
+.reserve-price {
+  color: #bd0000;
+}
+.block {
+  width: 100%;
+  .picker {
+    width: 100%;
+  }
+}
+.demo-datetime-picker {
+  display: flex;
+  width: 100%;
+  padding: 0;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: stretch;
+}
+.demo-datetime-picker .block {
+  padding: 30px 0;
+  text-align: center;
+}
+.line {
+  width: 1px;
+  background-color: var(--el-border-color);
 }
 </style>

@@ -1,63 +1,46 @@
 <script setup>
-import DiningItem from '@/views/DiningEntertainment/extended/DiningItem.vue'
 import ScenePanel from '@/views/Common/ScenePanel.vue'
+import RecreationItem from '../extended/RecreationItem.vue'
 
 import { ref } from 'vue'
 const value = ref([20, 100])
 
-const catering = ref([
+const entertainments = ref([
   {
     id: 1,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
+    project_name: '骑马',
+    project_location: '斯古拉文旅城',
     picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description: '美味实惠',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
+      'https://img1.baidu.com/it/u=3086382144,3957872787&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=752',
+    description: '歌舞表演',
+    avg_consumption: '200',
+    ticket_price: '150',
+    entertainment_start: '19:00',
+    entertainment_end: '21:00'
   },
   {
     id: 2,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
+    project_name: '骑马',
+    project_location: '斯古拉文旅城',
     picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description:
-      '美味实惠hhh哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
+      'https://img1.baidu.com/it/u=3086382144,3957872787&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=752',
+    description: '歌舞表演',
+    avg_consumption: '200',
+    ticket_price: '150',
+    entertainment_start: '19:00',
+    entertainment_end: '21:00'
   },
   {
     id: 3,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
+    project_name: '骑马',
+    project_location: '斯古拉文旅城',
     picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description: '美味实惠',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
-  },
-  {
-    id: 4,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
-    picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description: '美味实惠',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
+      'https://img1.baidu.com/it/u=3086382144,3957872787&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=752',
+    description: '歌舞表演',
+    avg_consumption: '200',
+    ticket_price: '150',
+    entertainment_start: '19:00',
+    entertainment_end: '21:00'
   }
 ])
 </script>
@@ -71,11 +54,11 @@ const catering = ref([
             <el-slider v-model="value" range show-stops :max="500" />
           </div>
         </el-form-item>
-        <el-form-item label="餐馆名：">
+        <el-form-item label="娱乐项目名：">
           <el-input
             v-model="input"
             style="width: 240px"
-            :placeholder="`搜索餐馆名...`"
+            :placeholder="`搜索娱乐项目...`"
             clearable
             @clear="clearInput"
           />
@@ -86,12 +69,12 @@ const catering = ref([
         </el-form-item>
       </el-form>
     </div>
-    <div class="restaurantList">
-      <ScenePanel title="餐馆列表">
+    <div class="entertainmentList">
+      <ScenePanel title="娱乐项目列表">
         <div class="box">
           <ul class="scenes-list">
-            <li v-for="restaurant in catering" :key="restaurant.id">
-              <DiningItem :restaurant="restaurant"></DiningItem>
+            <li v-for="entertainment in entertainments" :key="entertainment.id">
+              <RecreationItem :entertainment="entertainment"></RecreationItem>
             </li>
           </ul>
         </div>
@@ -288,7 +271,7 @@ const catering = ref([
       }
     }
   }
-  .restaurantList {
+  .entertainmentList {
     background-color: transparent;
     margin-top: 20px;
     .sub {

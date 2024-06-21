@@ -5,7 +5,7 @@
     <div class="container">
       <span class="weather">四姑娘山：28°</span>
       <ul>
-        <template v-if="true">
+        <template v-if="false">
           <li>
             <a href="javascript:;"><i class="iconfont icon-user"></i>周杰伦</a>
           </li>
@@ -24,7 +24,9 @@
           <li><a href="javascript:;">会员中心</a></li>
         </template>
         <template v-else>
-          <li><a href="javascript:;">请先登录</a></li>
+          <li>
+            <a href="javascript:;" @click="$router.push('/login')">请先登录</a>
+          </li>
           <li><a href="javascript:;">帮助中心</a></li>
           <li><a href="javascript:;">关于我们</a></li>
         </template>
@@ -40,7 +42,7 @@
 
     rgb(21, 3, 34),
     #122a3c
-  ); /* 从左到右的渐变色 */
+  );
   .container {
     position: relative;
     .weather {

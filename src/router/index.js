@@ -90,6 +90,13 @@ const router = createRouter({
                 import(
                   '@/views/DiningEntertainment/components/EntertainmentPerformance.vue'
                 )
+            },
+            {
+              path: 'recreation',
+              component: () =>
+                import(
+                  '@/views/DiningEntertainment/components/EntertainmentRecreation.vue'
+                )
             }
           ]
         },
