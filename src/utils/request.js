@@ -3,7 +3,7 @@ import router from '@/router'
 import { useUserStore } from '@/stores'
 import { showFailToast } from 'vant'
 
-const baseURL = 'http://192.168.42.64:8080'
+const baseURL = 'http://192.168.42.53:8080'
 
 const instance = axios.create({
   baseURL,

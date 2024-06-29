@@ -3,44 +3,7 @@ import { ref } from 'vue'
 import { getEmergencyList } from '@/apis/emergency'
 const dialogFormVisible = ref(false)
 // 分页逻辑
-const articleList = ref([
-  {
-    id: 16,
-    publisherId: 9,
-    reviewerId: 9,
-    title: 'edit',
-    content: 'edit-test',
-    releaseDate: '2024-06-21T17:11:16',
-    expirationDate: '2024-06-30T00:00:00',
-    lastUpdatedate: '2024-06-21T17:15:11',
-    isValid: 0,
-    status: 1
-  },
-  {
-    id: 15,
-    publisherId: 9,
-    reviewerId: 9,
-    title: 'test15',
-    content: '55555',
-    releaseDate: null,
-    expirationDate: '2024-06-30T00:00:00',
-    lastUpdatedate: '2024-06-21T17:02:02',
-    isValid: 0,
-    status: 3
-  },
-  {
-    id: 14,
-    publisherId: 9,
-    reviewerId: 9,
-    title: 'test14',
-    content: '44444',
-    releaseDate: '2024-06-21T17:09:01',
-    expirationDate: '2024-06-30T00:00:00',
-    lastUpdatedate: '2024-06-21T17:01:52',
-    isValid: 1,
-    status: 2
-  }
-])
+const articleList = ref([])
 const total = ref(0)
 // 定义请求参数对象
 const params = ref({
@@ -51,10 +14,10 @@ const params = ref({
 const getEmergency = async () => {
   // 接口请求
   const res = await getEmergencyList(params.value)
-  console.log(res)
+  console.log(res.data)
   // 更新数据
-  // articleList.value = res.data.records
-  total.value = res.data.total
+  articleList.value = res.data.data.records
+  total.value = res.data.data.total
 }
 getEmergency()
 
