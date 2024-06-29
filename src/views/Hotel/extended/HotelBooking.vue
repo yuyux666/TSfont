@@ -10,7 +10,8 @@ const rooms = ref([
 ])
 
 const BookingForm = {
-  hotel_name: '', // 酒店名
+  id: 0,
+  hotelName: '', // 酒店名
   occupier_name: '', // 预定人姓名
   occupier_phone: '', // 预定人电话
   room_maxNum: '9999', // 房间最大数量
@@ -96,8 +97,11 @@ watch(
   },
   { deep: true } // 使用深度监听，因为正在比较对象中的属性
 )
-const open = () => {
+const open = (data) => {
   visibleDrawer.value = true
+  // formModel = ref({...fromModel,...data})
+  formModel.value = { ...formModel.value, ...data }
+  console.log(formModel.value)
 }
 const centerDialogVisible = ref(false)
 const submitForm = () => {
@@ -156,7 +160,7 @@ defineExpose({ open })
     >
       <el-form-item label="酒店名称">
         <el-input
-          v-model="formModel.hotel_name"
+          v-model="formModel.hotelName"
           placeholder="四姑娘山宾馆"
           disabled
         ></el-input>

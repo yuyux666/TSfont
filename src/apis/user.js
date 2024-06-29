@@ -10,7 +10,7 @@ export const userRegisterService = ({
 
 // 登录请求
 export const userLoginService = ({ username, password }) =>
-  request.get('/user/login', { params: { username, password } })
+  request.post('/user/login', { username, password })
 
 // 注册发送验证码
 export const userSendCodeService = (phoneNumber) =>
