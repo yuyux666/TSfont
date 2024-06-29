@@ -4,9 +4,10 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import ScenePanel from '@/views/Common/ScenePanel.vue'
 import { Plus } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
-
+import { useUserStore } from '@/stores'
 import { ref } from 'vue'
 import { complaintSubmitService } from '@/apis/complaint'
+const useStore = useUserStore()
 const formRef = ref()
 const defaultForm = {
   name: '',
@@ -21,28 +22,33 @@ const rules = ref({
   title: [{ required: true, message: '请输入投诉标题', trigger: 'blur' }],
   content: [{ required: true, message: '请输入投诉内容', trigger: 'blur' }]
 })
+//文件列表
+const fileList = ref([])
 // 图片上传相关逻辑
 // const imageUrl = ref('')
-const onSelectFile = () => {}
+const onSelectFile = () => {
+  console.log('change')
+  console.log(fileList.value)
+}
 // let fileList = reactive([])
-const upload = (e) => {
-  console.log(e.target.files[0])
-  formModel.value.fileList.push(e.target.files[0])
-  console.log(formModel.value.fileList)
+// const upload = (e) => {
+//   console.log(e.target.files[0])
+//   formModel.value.fileList.push(e.target.files[0])
+//   console.log(formModel.value.fileList)
 
-  readFile(e.target.files[0])
-}
-function readFile(file) {
-  var reader = new FileReader()
-  reader.readAsDataURL(file)
-  reader.onload = function () {
-    // 图片内容
-    console.log(reader.result)
-  }
-}
-const removeFile = (index) => {
-  formModel.value.fileList.splice(index, 1)
-}
+//   readFile(e.target.files[0])
+// }
+// function readFile(file) {
+//   var reader = new FileReader()
+//   reader.readAsDataURL(file)
+//   reader.onload = function () {
+//     // 图片内容
+//     console.log(reader.result)
+//   }
+// }
+// const removeFile = (index) => {
+//   formModel.value.fileList.splice(index, 1)
+// }
 
 const load = ref(null)
 
@@ -55,9 +61,18 @@ const handleExceed = (files) => {
 
 // 上传表单
 const submitUpload = async () => {
-  load.value.submit()
-  const res = await complaintSubmitService({ title: '标题', content: '内容' })
+  // load.value.submit()
+
+  const res = await complaintSubmitService({
+    title: formModel.value.title,
+    content: formModel.value.content
+  })
   console.log(res)
+}
+//配置请求头，需要token,参数放在formdata
+
+const header = {
+  Authorization: useStore.token
 }
 </script>
 <template>
@@ -87,25 +102,19 @@ const submitUpload = async () => {
           <el-input v-model="formModel.content" type="textarea" />
         </el-form-item>
         <el-form-item label="上传附件">
-          <input type="file" multiple @change="upload" />
-          <ul>
-            <li v-for="(file, index) in fileList" :key="index">
-              {{ file.name }}
-              <button @click="removeFile(index)">删除</button>
-            </li>
-          </ul>
-        </el-form-item>
-        <el-form-item label="上传附件2">
           <!-- 文件上传：需要关闭el的自动上传功能(:auto-upload)，不需要配置action等参数
         只需要前端的本地预览工作，无需在提交前上传图标
         语法：URL.createObjectURL(...) -->
           <el-upload
+            v-model:file-list="fileList"
             ref="load"
             class="avatar-uploader"
             :auto-upload="false"
             :on-change="onSelectFile"
             :limit="1"
             :on-exceed="handleExceed"
+            action="http://192.168.42.53:8080/complaint/upload?state=0"
+            :headers="header"
           >
             <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
             <template #tip>
