@@ -1,6 +1,23 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import HotelBooking from '../extended/HotelBooking.vue'
+import { formatTime } from '@/utils/format'
+
+// 搜索表单
+const hotelForm = {
+  id: '',
+  hotel_name: '', // 酒店名
+  priority: '', // 优先级
+  location: '',
+  description: '',
+  isopen: '',
+  stars: '',
+  lowest_price: '120', // 最低价格
+  datetimeRange: [] // 入住与退房时间
+}
+const formModel = ref({
+  ...hotelForm
+})
 
 const params = ref({
   pagenum: 1,
@@ -20,11 +37,12 @@ const onReset = () => {
   params.value.cate_id = ''
   params.value.state = ''
 }
+onMounted(() => {
+  const today = formatTime(new Date()) // 假设 formatTime 函数返回 YYYY-MM-DD 格式的日期字符串
+  const tomorrow = formatTime(new Date(Date.now() + 24 * 60 * 60 * 1000)) // 明日的日期
 
-// const visibleDrawer = ref(false)
-// const onAddReserve = () => {
-//   visibleDrawer.value = true
-// }
+  formModel.value.datetimeRange = [today, tomorrow] // 将今日和明日日期设置为 datetimeRange 的初始值
+})
 const bookingRef = ref()
 const onAddBooking = () => {
   bookingRef.value.open({})
@@ -33,10 +51,21 @@ const onAddBooking = () => {
 <template>
   <div class="mycontainer">
     <!-- 表单区域 -->
-    <el-form inline class="hotel-search">
-      <el-form-item label="星级：" class="star-name">
+    <el-form inline class="hotel-search" :model="formModel">
+      <el-form-item label="住房时间" class="label-name">
+        <el-date-picker
+          v-model="formModel.datetimeRange"
+          value-format="YYYY-MM-DD"
+          type="daterange"
+          range-separator="To"
+          start-placeholder="入住日期"
+          end-placeholder="退房日期"
+          size="default"
+        />
+      </el-form-item>
+      <el-form-item label="星级：" class="label-name">
         <!-- Vue3中 v-model是 :modelValue和@update:modelValue的简写 -->
-        <el-select style="width: 150px">
+        <el-select style="width: 150px" v-model="formModel.stars">
           <el-option label="五星级" value="五星级"></el-option>
           <el-option label="四星级" value="四星级"></el-option>
           <el-option label="三星级" value="三星级"></el-option>
@@ -46,11 +75,12 @@ const onAddBooking = () => {
           <el-option label="乡村旅游" value="乡村旅游"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="酒店名：" class="star-name">
+      <el-form-item label="酒店名：" class="label-name">
         <el-input
-          style="width: 240px"
+          style="width: 200px"
           :placeholder="`搜索酒店名...`"
           clearable
+          v-model="formModel.hotel_name"
         />
       </el-form-item>
       <el-form-item label="">
@@ -139,7 +169,7 @@ const onAddBooking = () => {
 .hotel-search {
   display: flex;
   justify-content: space-evenly;
-  .star-name .el-form-item__label {
+  .label-name .el-form-item__label {
     color: white;
   }
 }

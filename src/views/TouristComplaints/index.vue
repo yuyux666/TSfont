@@ -24,10 +24,6 @@
           <el-icon><Management /></el-icon>
           <span>我的投诉</span>
         </el-menu-item>
-        <el-menu-item index="/main/complaint/complaintEvaluate">
-          <el-icon><Management /></el-icon>
-          <span>投诉评价</span>
-        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>

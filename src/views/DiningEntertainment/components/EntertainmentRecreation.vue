@@ -48,7 +48,7 @@ const entertainments = ref([
   <div class="mycontainer">
     <div class="search">
       <el-form inline class="dining-search">
-        <el-form-item label="平均价格筛选">
+        <el-form-item label="价格筛选">
           <!-- Vue3中 v-model是 :modelValue和@update:modelValue的简写 -->
           <div class="slider-demo-block" style="width: 300px">
             <el-slider v-model="value" range show-stops :max="500" />

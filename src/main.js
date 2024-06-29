@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { Toast } from 'vant'
 
 // 引入懒加载插件并注册
 import { lazyPlugin } from './directives'
@@ -16,5 +17,6 @@ app.use(createPinia())
 app.use(router)
 app.use(lazyPlugin)
 app.use(createPinia().use(persist))
+app.use(Toast)
 
 app.mount('#app')

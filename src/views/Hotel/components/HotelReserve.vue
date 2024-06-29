@@ -7,7 +7,11 @@ const articleList = ref([])
   <div class="mycontainer">
     <ScenePanel title="我的预定">
       <!-- 表格区域 -->
-      <el-table :data="articleList" v-loading="loading" style="width: 90%">
+      <el-table
+        :data="articleList"
+        v-loading="loading"
+        style="width: 90; border-radius: 10px; min-height: 300px"
+      >
         <el-table-column label="预定酒店" prop="title">
           <template #default="{ row }">
             <el-link type="primary" :underline="false">{{ row.title }}</el-link>

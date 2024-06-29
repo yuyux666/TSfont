@@ -2,11 +2,17 @@
 import { User, Lock, Iphone, Phone } from '@element-plus/icons-vue'
 
 import { ref, watch, reactive } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { onUnmounted } from 'vue'
+import { useUserStore } from '@/stores'
+import {
+  userLoginService,
+  userRegisterService,
+  userSendCodeService
+} from '@/apis/user'
 // import { ElMessage } from 'element-plus'
 
-// const router = useRouter()
+const router = useRouter()
 
 const isRegister = ref(false) // true注册
 // 登录
@@ -19,7 +25,7 @@ let formModel = reactive({
   password: '',
   repassword: '',
   phoneNumber: '',
-  picPhonecode: '',
+  code: '',
   totalSecond: 60,
   second: 60, // 当前秒数
   timer: null // 定时器id
@@ -32,7 +38,7 @@ let formModel = reactive({
 const rules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 5, max: 10, message: '用户名必须是5-10位字符', trigger: 'blur' }
+    { min: 2, max: 10, message: '用户名必须是2-10位字符', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
@@ -64,7 +70,7 @@ const rules = {
     { required: true, message: '请输入手机号', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
   ],
-  picPhonecode: [
+  code: [
     { required: true, message: '请输入验证码', trigger: 'blur' },
     { pattern: /^\d{6}$/, message: '验证码必须是6位数字', trigger: 'blur' }
   ]
@@ -77,7 +83,7 @@ watch(isRegister, () => {
     password: '',
     repassword: '',
     phoneNumber: '',
-    picPhonecode: '',
+    code: '',
     totalSecond: 60,
     second: formModel.second, // 当前秒数
     timer: null // 定时器id
@@ -85,10 +91,15 @@ watch(isRegister, () => {
 })
 
 // 发送验证码
-const getCode = () => {
-  console.log(formModel)
+const getCode = async () => {
+  // console.log(formModel)
   if (formModel.second === formModel.totalSecond) {
     // 开始倒计时
+    const res = await userSendCodeService(formModel.phoneNumber)
+    console.log('验证码为' + res)
+    // ElMessage.success('验证码发送成功！')
+    showSuccessToast('验证码发送成功！')
+    // 倒计时
     formModel.second = formModel.totalSecond
     formModel.timer = setInterval(() => {
       if (formModel.second > 0) {
@@ -113,17 +124,51 @@ onUnmounted(clearTimer)
 const register = async () => {
   await formRef.value.validate()
   // 发送注册接口请求
+  const { username, password, phoneNumber, code } = formModel
+  const res = await userRegisterService({
+    username,
+    password,
+    phoneNumber,
+    code
+  })
+  console.log(res)
+
+  showSuccessToast({
+    message: '注册成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
+    }
+  })
 
   isRegister.value = false
 }
+
+const userStore = useUserStore()
 const login = async () => {
   // 对表单进行校验
-  // await formRef.value.validate()
+  await formRef.value.validate()
   // 发送登录接口请求
+  console.log(formModel)
+  const LoginParams = {
+    username: formModel.username,
+    password: formModel.password
+  }
+  console.log(LoginParams)
+  const res = await userLoginService(LoginParams)
+  console.log(res.data.message)
   //设置pinia用户token
-  // ElMessage.success('11111')
+  userStore.setToken(res.data.message)
+  // ElMessage.success('登录成功！')
+  showSuccessToast({
+    message: '登录成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
+    }
+  })
   // 登录成功后跳转到首页
-  // router.push('/')
+  router.push('/')
 }
 </script>
 
@@ -176,9 +221,9 @@ const login = async () => {
             placeholder="请输入手机号"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="picPhonecode">
+        <el-form-item prop="code">
           <el-input
-            v-model="formModel.picPhonecode"
+            v-model="formModel.code"
             :prefix-icon="Phone"
             placeholder="请输入验证码"
             ><template #append
@@ -249,8 +294,8 @@ const login = async () => {
 
         <el-form-item class="flex">
           <div class="flex">
-            <el-checkbox style="color: #fff">记住我</el-checkbox>
-            <el-link type="primary" :underline="false">忘记密码？</el-link>
+            <!-- <el-checkbox style="color: #fff">记住我</el-checkbox> -->
+            <!-- <el-link type="primary" :underline="false">忘记密码？</el-link> -->
           </div>
         </el-form-item>
         <el-form-item>
@@ -346,6 +391,8 @@ const login = async () => {
     }
     .button {
       width: 100%;
+      background-color: $xtxColor;
+      color: #122a3c;
     }
     .flex {
       width: 100%;

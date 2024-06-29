@@ -153,13 +153,6 @@ const router = createRouter({
                 import(
                   '@/views/TouristComplaints/components/ComplaintCheck.vue'
                 )
-            },
-            {
-              path: 'complaintEvaluate',
-              component: () =>
-                import(
-                  '@/views/TouristComplaints/components/ComplaintEvaluate.vue'
-                )
             }
           ]
         }

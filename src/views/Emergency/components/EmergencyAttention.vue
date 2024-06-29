@@ -3,7 +3,7 @@
   <div class="mycontainer">
     <div class="banner">
       <p class="text-center demonstration"></p>
-      <el-carousel
+      <!-- <el-carousel
         height="400px"
         direction="vertical"
         type="card"
@@ -45,7 +45,7 @@
             </p>
           </h3>
         </el-carousel-item>
-      </el-carousel>
+      </el-carousel> -->
     </div>
     <div class="content">
       <div class="publish-header">注意事项</div>

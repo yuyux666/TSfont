@@ -1,6 +1,83 @@
 <script setup>
 import { ref } from 'vue'
+import { getEmergencyList } from '@/apis/emergency'
 const dialogFormVisible = ref(false)
+// 分页逻辑
+const articleList = ref([
+  {
+    id: 16,
+    publisherId: 9,
+    reviewerId: 9,
+    title: 'edit',
+    content: 'edit-test',
+    releaseDate: '2024-06-21T17:11:16',
+    expirationDate: '2024-06-30T00:00:00',
+    lastUpdatedate: '2024-06-21T17:15:11',
+    isValid: 0,
+    status: 1
+  },
+  {
+    id: 15,
+    publisherId: 9,
+    reviewerId: 9,
+    title: 'test15',
+    content: '55555',
+    releaseDate: null,
+    expirationDate: '2024-06-30T00:00:00',
+    lastUpdatedate: '2024-06-21T17:02:02',
+    isValid: 0,
+    status: 3
+  },
+  {
+    id: 14,
+    publisherId: 9,
+    reviewerId: 9,
+    title: 'test14',
+    content: '44444',
+    releaseDate: '2024-06-21T17:09:01',
+    expirationDate: '2024-06-30T00:00:00',
+    lastUpdatedate: '2024-06-21T17:01:52',
+    isValid: 1,
+    status: 2
+  }
+])
+const total = ref(0)
+// 定义请求参数对象
+const params = ref({
+  page: 1,
+  pageSize: 5
+})
+// 获取应急信息列表
+const getEmergency = async () => {
+  // 接口请求
+  const res = await getEmergencyList(params.value)
+  console.log(res)
+  // 更新数据
+  // articleList.value = res.data.records
+  total.value = res.data.total
+}
+getEmergency()
+
+// 获取点击文章内容
+const selectedArticle = ref(null)
+const showArticleContent = (item) => {
+  selectedArticle.value = item
+  dialogFormVisible.value = true
+}
+// 处理分页逻辑
+const onSizeChange = (size) => {
+  console.log(size)
+  // 重新更改每页条数时
+  // 重新第一页渲染
+  params.value.page = 1
+  params.value.pageSize = size
+  getEmergency()
+}
+const onCurrentChange = (page) => {
+  // 更新当前页
+  params.value.page = page
+  getEmergency()
+}
 </script>
 <template>
   <div class="mycontainer">
@@ -11,21 +88,26 @@ const dialogFormVisible = ref(false)
         </div>
       </template>
       <ul class="emergency-list">
-        <li class="emergency-item" v-for="item in 5" :key="item">
-          <el-link @click="dialogFormVisible = true">应急文章标题1</el-link>
+        <li class="emergency-item" v-for="item in articleList" :key="item.id">
+          <el-link @click="showArticleContent(item)">{{ item.title }}</el-link>
           <div class="pubilsh">
-            <span>发布时间：xx月xx日 </span>|<span> 发布人：XXX</span>
+            <span>发布时间：{{ item.releaseDate }} </span>|<span>
+              发布人：XXX</span
+            >
           </div>
         </li>
       </ul>
-      <el-dialog v-model="dialogFormVisible" width="800">
-        <div class="publish-header">应急文章标题1</div>
+      <el-dialog
+        v-model="dialogFormVisible"
+        style="width: 800px; min-height: 600px"
+      >
+        <div class="publish-header">{{ selectedArticle.title }}</div>
         <div class="publish-information">
-          <span>发布时间：xx月xx日 |</span>
+          <span>发布时间：{{ selectedArticle.releaseDate }} |</span>
           <span> 发布人：XXX</span>
         </div>
         <p class="publish-content">
-          5月19日，为庆祝第十四个中国旅游日，四姑娘山管理局团委以“永远跟党走，奋进新征程”为主题开展了系列活动。活动通过诗歌朗诵、歌舞演绎、知识抢答、旅游志愿服务宣誓等形式，更为生动的引导广大团员青年的爱国意识，作为旅游人的行业觉悟，自觉从党的重大成就和历史经验中汲取力量、增长智慧、坚定信心，引导广大团员青年亮身份、做表率、当先锋，以奋斗的姿态迎接新征程，在四姑娘山景区上下营造昂扬向上、团结奋进的良好氛围，充分展现青年们的爱党爱国情怀和奋发向上的精神风貌。同时开展了四姑娘山景区志愿者服务启动仪式，积极引导青年团员争做文明旅游志愿者，为四姑娘山景区旅游发展做出贡献，努力服务好每一位游客。
+          {{ selectedArticle.content }}
         </p>
         <!-- <template #footer>
           <div class="dialog-footer">
@@ -36,11 +118,32 @@ const dialogFormVisible = ref(false)
           </div>
         </template> -->
       </el-dialog>
+
+      <!-- 分页 -->
+      <el-pagination
+        v-model:current-page="params.page"
+        v-model:page-size="params.pageSize"
+        :page-sizes="[2, 3, 5, 10]"
+        :background="true"
+        layout="jumper, total, sizes, prev, pager, next"
+        :total="total"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        style="margin-top: 50px; justify-content: flex-end"
+      />
     </el-card>
   </div>
 </template>
 
 <style lang="scss" scoped>
+:deep() {
+  .el-pagination__total {
+    color: #fff;
+  }
+  .el-pagination__jump {
+    color: #fff;
+  }
+}
 .card {
   border: 1px solid $xtxColor;
   border-radius: 10px;
@@ -51,6 +154,12 @@ const dialogFormVisible = ref(false)
   font-weight: 500;
   font-size: 30px;
   text-align: center;
+}
+.example-pagination-block + .example-pagination-block {
+  margin-top: 10px;
+}
+.example-pagination-block .example-demonstration {
+  margin-bottom: 16px;
 }
 .emergency-list {
   // background: #000;

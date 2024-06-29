@@ -5,26 +5,42 @@
       <div class="container">
         <dl>
           <dt>了解四姑娘山</dt>
-          <dd>
+          <dd @click="$router.push('/main/touristAttractions/tourShuangqiao')">
             <i
               class="iconfont icon-zhongyaojianghehubogongnengqushuizhidabiaoshuaiicon"
             ></i
             >双桥沟
           </dd>
-          <dd><i class="iconfont icon-haiba"></i>长坪沟</dd>
-          <dd><i class="iconfont icon-fengjingqu"></i>海子沟</dd>
+          <dd @click="$router.push('/main/touristAttractions/tourChangping')">
+            <i class="iconfont icon-haiba"></i>长坪沟
+          </dd>
+          <dd @click="$router.push('/main/touristAttractions/tourHaizi')">
+            <i class="iconfont icon-fengjingqu"></i>海子沟
+          </dd>
         </dl>
         <dl>
           <dt>旅行·线路</dt>
-          <dd><i class="iconfont icon-xianlu"></i> 线路查询</dd>
-          <dd><i class="iconfont icon-yanhui"></i> 美食娱乐</dd>
-          <dd><i class="iconfont icon-jiudianzhusu"></i> 住宿服务</dd>
-          <dd><i class="iconfont icon-dingpiao"></i> 订票服务</dd>
+          <dd @click="$router.push('/main/travel/travelRoute')">
+            <i class="iconfont icon-xianlu"></i> 线路推荐
+          </dd>
+          <dd @click="$router.push('/main/diningEntertainment/dining')">
+            <i class="iconfont icon-yanhui"></i> 美食娱乐
+          </dd>
+          <dd @click="$router.push('/main/hotel/hotelEnquiry')">
+            <i class="iconfont icon-jiudianzhusu"></i> 住宿服务
+          </dd>
+          <dd @click="$router.push('/main/hotel/hotelReserve')">
+            <i class="iconfont icon-dingpiao"></i> 订票服务
+          </dd>
         </dl>
         <dl>
           <dt>景区资讯</dt>
-          <dd><i class="iconfont icon-yingjizhongxin"></i> 应急信息</dd>
-          <dd><i class="iconfont icon-guanyuwomen"></i> 注意事项</dd>
+          <dd @click="$router.push('/main/emergency/emergencyInfo')">
+            <i class="iconfont icon-yingjizhongxin"></i> 应急信息
+          </dd>
+          <dd @click="$router.push('/main/emergency/emergencyAttention')">
+            <i class="iconfont icon-guanyuwomen"></i> 注意事项
+          </dd>
         </dl>
       </div>
     </div>
@@ -51,7 +67,6 @@
             <a href="javascript:;">关于我们</a>
             <a href="javascript:;">帮助中心</a>
             <a href="javascript:;">商务合作</a>
-            <a href="javascript:;">搜索推荐</a>
             <a href="javascript:;">友情链接</a>
           </p>
           <p>CopyRight © huadi第7组</p>
@@ -184,6 +199,7 @@
       line-height: 58px;
       color: #fff;
       font-size: 28px;
+      text-align: center;
 
       i {
         font-size: 50px;
