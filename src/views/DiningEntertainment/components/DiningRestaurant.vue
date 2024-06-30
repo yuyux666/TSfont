@@ -3,63 +3,16 @@ import DiningItem from '@/views/DiningEntertainment/extended/DiningItem.vue'
 import ScenePanel from '@/views/Common/ScenePanel.vue'
 
 import { ref } from 'vue'
+import { DiningRoomListService } from '@/apis/entertainment'
 const value = ref([20, 100])
 
-const catering = ref([
-  {
-    id: 1,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
-    picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description: '美味实惠',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
-  },
-  {
-    id: 2,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
-    picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description:
-      '美味实惠hhh哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
-  },
-  {
-    id: 3,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
-    picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description: '美味实惠',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
-  },
-  {
-    id: 4,
-    store_name: '牦牛火锅店',
-    tore_location: '四姑娘山镇118号',
-    picture:
-      'https://img2.baidu.com/it/u=884366956,3150300160&fm=253&fmt=auto&app=138&f=JPEG?w=448&h=448',
-    description: '美味实惠',
-    avg_consumption: '50',
-    priority: '1',
-    opentime: '08:00',
-    endtime: '21:00',
-    isopen: '1'
-  }
-])
+const catering = ref([])
+const getDiningList = async () => {
+  const res = await DiningRoomListService()
+  console.log(res)
+  catering.value = res.data.data
+}
+getDiningList()
 </script>
 <template>
   <div class="mycontainer">

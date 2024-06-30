@@ -9,16 +9,17 @@ defineProps({
 
 <template>
   <div class="restaurant-item">
-    <img v-img-lazy="restaurant.picture" alt="" />
-    <p class="name ellipsis">{{ restaurant.store_name }}</p>
+    <img v-img-lazy="restaurant.promotionalImage" alt="" />
+    <p class="name ellipsis">{{ restaurant.storeName }}</p>
 
     <div class="content">
-      <p class="address ellipsis">地址：{{ restaurant.tore_location }}</p>
-      <span class="price">平均消费：{{ restaurant.avg_consumption }}元</span>
+      <p class="address ellipsis">地址：{{ restaurant.storeLocation }}</p>
+      <span class="price">平均消费：{{ restaurant.avgConsumption }}元</span>
       <p class="desc ellipsis">{{ restaurant.description }}</p>
       <span class="time">
         <p>
-          营业时间{{ restaurant.opentime }}~{{ restaurant.endtime }} | 营业中
+          营业时间{{ restaurant.opentime }}~{{ restaurant.endtime }} |
+          {{ restaurant.isopen === 1 ? '开放中' : '暂停营业' }}
         </p>
       </span>
     </div>

@@ -20,6 +20,9 @@ export const userSendCodeService = (phoneNumber) =>
 export const userChangePasswordService = (password) =>
   request.put('/user/set-pwd', { password })
 
+// 获取用户基本信息
+export const userGetUserInfoService = () => request.get('/user/getUser')
+
 // 获取全部订单
 export const userGetAllOrderService = () => request.get('/user/order/index')
 

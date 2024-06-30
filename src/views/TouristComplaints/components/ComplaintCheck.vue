@@ -2,8 +2,15 @@
 import ScenePanel from '@/views/Common/ScenePanel.vue'
 import EvaluateItem from '../extended/EvaluateItem.vue'
 import { ref } from 'vue'
+import { complaintViewService } from '@/apis/complaint'
 
 const evaluateRef = ref()
+const total = ref(0)
+// 定义请求参数对象
+const params = ref({
+  currPage: 1,
+  size: 5
+})
 
 const contentForm = ref({
   id: '1',
@@ -68,6 +75,13 @@ const complaintList = [
     grade: '' // 评分
   }
 ]
+
+const getComplaintList = async () => {
+  const res = await complaintViewService(params.value)
+  console.log(res)
+  complaintList.value = res.data.data.records
+}
+getComplaintList()
 </script>
 <template>
   <div class="mycontainer">
@@ -78,7 +92,7 @@ const complaintList = [
         v-loading="loading"
         style="width: 90; border-radius: 10px; min-height: 300px"
       >
-        <el-table-column label="投诉日期" prop="submit_time"></el-table-column>
+        <el-table-column label="投诉日期" prop="submitTime"></el-table-column>
         <el-table-column
           label="投诉人"
           prop="complainter_name"
@@ -93,13 +107,10 @@ const complaintList = [
             >
           </template>
         </el-table-column>
-        <el-table-column
-          label="处理结果"
-          prop="result_content"
-        ></el-table-column>
+        <el-table-column label="处理结果" prop="replyContent"></el-table-column>
         <el-table-column
           label="处理时间"
-          prop="processing_time"
+          prop="processingTime"
         ></el-table-column>
         <el-table-column label="处理员" prop="processor_name"></el-table-column>
         <el-table-column label="审核员" prop="approvere_name"></el-table-column>
@@ -142,6 +153,18 @@ const complaintList = [
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <el-pagination
+        v-model:current-page="params.currPage"
+        v-model:page-size="params.size"
+        :page-sizes="[2, 3, 5, 10]"
+        :background="true"
+        layout="jumper, total, sizes, prev, pager, next"
+        :total="total"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        style="margin-top: 50px; justify-content: flex-end"
+      />
     </ScenePanel>
 
     <!-- 投诉评价 -->

@@ -159,6 +159,7 @@ const login = async () => {
   console.log(res.data.message)
   //设置pinia用户token
   userStore.setToken(res.data.message)
+  // userStore.setUserName(formModel.username)
   // ElMessage.success('登录成功！')
   showSuccessToast({
     message: '登录成功！',

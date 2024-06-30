@@ -10,21 +10,21 @@ defineProps({
 <template>
   <div class="performance-item">
     <img v-img-lazy="performance.picture" alt="" />
-    <p class="name ellipsis">{{ performance.performance_name }}</p>
+    <p class="name ellipsis">{{ performance.performanceName }}</p>
 
     <div class="content">
-      <p class="type ellipsis">演出类型：{{ performance.performance_type }}</p>
-      <p class="team-name ellipsis">团体组织：{{ performance.group_name }}</p>
+      <p class="type ellipsis">演出类型：{{ performance.performanceType }}</p>
+      <p class="team-name ellipsis">团体组织：{{ performance.groupName }}</p>
       <p class="address ellipsis">
-        地址：{{ performance.performance_location }}
+        地址：{{ performance.performanceLocation }}
       </p>
-      <span class="price">门票价格：{{ performance.ticket_price }}元</span>
+      <span class="price">门票价格：{{ performance.ticketPrice }}元</span>
       <span class="time">
         <p>
-          营业时间{{ performance.performance_start }}~{{
-            performance.performance_end
+          营业时间：{{ performance.performanceStart }}~{{
+            performance.performanceEnd
           }}
-          | 营业中
+          <!-- | {{ item.isOpen === 1 ? '开放中' : '暂停营业' }} -->
         </p>
       </span>
     </div>

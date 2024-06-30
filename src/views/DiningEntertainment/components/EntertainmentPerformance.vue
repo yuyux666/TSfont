@@ -3,46 +3,17 @@ import ScenePanel from '@/views/Common/ScenePanel.vue'
 import PerformanceItem from '../extended/PerformanceItem.vue'
 
 import { ref } from 'vue'
+import { PerformanceListService } from '@/apis/entertainment'
 const value = ref([20, 100])
 
-const performances = ref([
-  {
-    id: 1,
-    performance_name: 'Hot Summer',
-    performance_location: '斯古拉文旅城',
-    picture:
-      'https://www.sgns.cn/templates/rt_horizon/custom/images/2021_101/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20211019215909.png',
-    performance_type: '歌舞表演',
-    group_name: 'Summer',
-    ticket_price: '150',
-    performance_start: '19:00',
-    performance_end: '21:00'
-  },
-  {
-    id: 2,
-    performance_name: 'Hot Summer',
-    performance_location: '斯古拉文旅城',
-    picture:
-      'https://www.sgns.cn/templates/rt_horizon/custom/images/2021_101/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20211019215909.png',
-    performance_type: '歌舞表演',
-    group_name: 'Summer',
-    ticket_price: '150',
-    performance_start: '19:00',
-    performance_end: '21:00'
-  },
-  {
-    id: 3,
-    performance_name: 'Hot Summer',
-    performance_location: '斯古拉文旅城',
-    picture:
-      'https://www.sgns.cn/templates/rt_horizon/custom/images/2021_101/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20211019215909.png',
-    performance_type: '歌舞表演',
-    group_name: 'Summer',
-    ticket_price: '150',
-    performance_start: '19:00',
-    performance_end: '21:00'
-  }
-])
+const performances = ref([])
+
+const getPerformanceList = async () => {
+  const res = await PerformanceListService()
+  console.log(res)
+  performances.value = res.data.data
+}
+getPerformanceList()
 </script>
 <template>
   <div class="mycontainer">

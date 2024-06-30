@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import { getEmergencyList } from '@/apis/emergency'
+// import { getEmergencyList } from '@/apis/emergency'
+import { useEmergencyStore } from '@/stores'
+
+const emergencyStore = useEmergencyStore()
 const dialogFormVisible = ref(false)
 // 分页逻辑
 const articleList = ref([])
@@ -13,11 +16,10 @@ const params = ref({
 // 获取应急信息列表
 const getEmergency = async () => {
   // 接口请求
-  const res = await getEmergencyList(params.value)
-  console.log(res.data)
+  await emergencyStore.getEmergency(params.value)
   // 更新数据
-  articleList.value = res.data.data.records
-  total.value = res.data.data.total
+  articleList.value = emergencyStore.emergencyList
+  total.value = emergencyStore.total
 }
 getEmergency()
 

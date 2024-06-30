@@ -3,6 +3,7 @@ import ScenePanel from '@/views/Common/ScenePanel.vue'
 import RecreationItem from '../extended/RecreationItem.vue'
 
 import { ref } from 'vue'
+import { RecreationProjectListService } from '@/apis/entertainment'
 const value = ref([20, 100])
 
 const entertainments = ref([
@@ -17,32 +18,14 @@ const entertainments = ref([
     ticket_price: '150',
     entertainment_start: '19:00',
     entertainment_end: '21:00'
-  },
-  {
-    id: 2,
-    project_name: '骑马',
-    project_location: '斯古拉文旅城',
-    picture:
-      'https://img1.baidu.com/it/u=3086382144,3957872787&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=752',
-    description: '歌舞表演',
-    avg_consumption: '200',
-    ticket_price: '150',
-    entertainment_start: '19:00',
-    entertainment_end: '21:00'
-  },
-  {
-    id: 3,
-    project_name: '骑马',
-    project_location: '斯古拉文旅城',
-    picture:
-      'https://img1.baidu.com/it/u=3086382144,3957872787&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=752',
-    description: '歌舞表演',
-    avg_consumption: '200',
-    ticket_price: '150',
-    entertainment_start: '19:00',
-    entertainment_end: '21:00'
   }
 ])
+const getEntertainmentList = async () => {
+  const res = await RecreationProjectListService()
+  console.log(res)
+  entertainments.value = res.data.data
+}
+getEntertainmentList()
 </script>
 <template>
   <div class="mycontainer">

@@ -8,3 +8,6 @@ pinia.use(persist)
 export default pinia
 // 等价于import和export
 export * from './modules/user'
+export * from './modules/emergency'
+export * from './modules/entertainment'
+export * from './modules/scene'

@@ -4,6 +4,9 @@ import request from '@/utils/request'
 export const SceneAppointListService = (id) =>
   request.get(`/scenic/index/${id}`)
 
+// 根据大景点查询
+export const SceneListService = (id) => request.get(`/attractions/scenic/${id}`)
+
 // 查询具体景点
 export const SceneDetailService = (id) =>
   request.get(`/scenic/sight/index/${id}`)

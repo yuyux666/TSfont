@@ -10,15 +10,15 @@ defineProps({
 <template>
   <div class="entertainment-item">
     <img v-img-lazy="entertainment.picture" alt="" />
-    <p class="name ellipsis">{{ entertainment.project_name }}</p>
+    <p class="name ellipsis">{{ entertainment.projectName }}</p>
 
     <div class="content">
       <p class="address ellipsis">地址：{{ entertainment.project_location }}</p>
       <p class="address ellipsis">描述：{{ entertainment.description }}</p>
       <p class="avg_consumption ellipsis">
-        平均消费：{{ entertainment.avg_consumption }}元
+        平均消费：{{ entertainment.avgConsumption }}元
       </p>
-      <span class="price">门票价格：{{ entertainment.ticket_price }}元</span>
+      <span class="price">门票价格：{{ entertainment.ticketPrice }}元</span>
       <span class="time">
         <p>
           营业时间{{ entertainment.entertainment_start }}~{{

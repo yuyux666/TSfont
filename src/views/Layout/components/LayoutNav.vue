@@ -1,17 +1,31 @@
-<script setup></script>
+<script setup>
+import { useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+const onLogOut = () => {
+  console.log(userStore.token)
+  userStore.removeToken()
+  console.log(userStore.token)
+  router.push('/login')
+}
+</script>
 
 <template>
   <nav class="app-topnav">
     <div class="container">
       <span class="weather">四姑娘山：28°</span>
       <ul>
-        <template v-if="false">
+        <template v-if="userStore.token">
           <li>
             <a href="javascript:;"><i class="iconfont icon-user"></i>周杰伦</a>
           </li>
           <li>
             <el-popconfirm
               title="确认退出吗?"
+              @confirm="onLogOut"
               confirm-button-text="确认"
               cancel-button-text="取消"
             >
