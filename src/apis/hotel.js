@@ -6,10 +6,12 @@ export const hotelSearchService = ({
   stars,
   lowestPrice,
   pageSize,
-  pageNum
+  pageNum,
+  checkIn,
+  checkOut
 }) =>
   request.get('/hotel/index', {
-    params: { name, stars, lowestPrice, pageSize, pageNum }
+    params: { name, stars, lowestPrice, pageSize, pageNum, checkIn, checkOut }
   })
 
 // 游客查看预定酒店详情

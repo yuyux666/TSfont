@@ -6,7 +6,6 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { Toast } from 'vant'
-//吴炫境
 // 引入懒加载插件并注册
 import { lazyPlugin } from './directives'
 import persist from 'pinia-plugin-persistedstate'
