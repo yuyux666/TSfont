@@ -1,14 +1,10 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
-import { formatTime } from '@/utils/format'
-
+import { ref, watch } from 'vue'
+import { hotelRoomService, hotelBookingService } from '@/apis/hotel'
+//抽屉显隐
 const visibleDrawer = ref(false)
-
-const rooms = ref([
-  { id: '0', type: '大床房', maxNum: '18', price: '180' },
-  { id: '1', type: '双床房', maxNum: '10', price: '170' }
-])
-
+//房型列表
+const rooms = ref([])
 const BookingForm = {
   id: 0,
   hotelName: '', // 酒店名
@@ -16,16 +12,15 @@ const BookingForm = {
   occupier_phone: '', // 预定人电话
   room_maxNum: '9999', // 房间最大数量
   room_num: '1', // 房间数量
-  room_id: '0', // 房型
-  hotel_price: '', //房型对应价格
-  cost: '', // 支付金额
-  dayTime: '1', // 入住天数
-  status: '' // 支付状态
+  room_id: '', // 房型
+  cost: 0, // 支付金额
+  dayTime: '1' // 入住天数
 }
+//预定表单
+const formRef = ref(null)
 const formModel = ref({
   ...BookingForm,
-  datetimeRange: [],
-  rooms
+  datetimeRange: []
 })
 const rules = {
   occupier_name: [
@@ -39,36 +34,9 @@ const rules = {
   occupier_phone: [
     { required: true, message: '请输入预定人电话', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
-  ],
-
-  checkin_time: [
-    { required: true, message: '请输入入住时间', trigger: 'blur' }
-  ],
-  checkout_time: [
-    { required: true, message: '请输入退房时间', trigger: 'blur' }
   ]
+  // room_id: [{ required: true, message: '请选择房型', trigger: 'change' }]
 }
-// 默认今日日期
-onMounted(() => {
-  const today = formatTime(new Date()) // 假设 formatTime 函数返回 YYYY-MM-DD 格式的日期字符串
-  const tomorrow = formatTime(new Date(Date.now() + 24 * 60 * 60 * 1000)) // 明日的日期
-
-  formModel.value.datetimeRange = [today, tomorrow] // 将今日和明日日期设置为 datetimeRange 的初始值
-})
-
-// 点击下拉栏传值，更新对应的房间数量与房型价格
-const updateRoomDetails = () => {
-  // 切换后从1开始
-  formModel.value.room_num = '1'
-  const selectedRoom = rooms.value.find(
-    (room) => room.id === formModel.value.room_id
-  )
-  if (selectedRoom) {
-    formModel.value.room_maxNum = selectedRoom.maxNum
-    formModel.value.hotel_price = selectedRoom.price
-  }
-}
-watch(() => formModel.value.room_id, updateRoomDetails)
 
 // 监听选择的数量与房型，计算总金额
 watch(
@@ -78,67 +46,95 @@ watch(
     datetimeRange: formModel.value.datetimeRange // 注意这里直接监听整个数组的引用变化
   }),
   async (newVal, oldVal) => {
+    //没选房型，不计算
+    if (newVal.room_id === '') return
     // 当room_num、room_id或datetimeRange中的任何一个发生变化时，都会执行这个函数
-
     if (
       newVal.room_num !== oldVal.room_num ||
       newVal.room_id !== oldVal.room_id ||
       newVal.datetimeRange !== oldVal.datetimeRange // 注意这里比较的是数组引用
     ) {
-      console.log('111')
+      //获取天数
+      const dayTime = getDayTime(newVal.datetimeRange)
+      const price = rooms.value.find(
+        (room) => room.id === newVal.room_id
+      ).roomPrice
       // 调用价格计算接口
-      formModel.value.cost =
-        newVal.room_num * formModel.value.dayTime * formModel.value.hotel_price
-      console.log(formModel.value.cost)
-      console.log(
-        formModel.value.datetimeRange[1] - formModel.value.datetimeRange[1]
-      )
+      formModel.value.cost = newVal.room_num * dayTime * price
     }
   },
   { deep: true } // 使用深度监听，因为正在比较对象中的属性
 )
 const open = (data) => {
+  //调用该方法打开抽屉
   visibleDrawer.value = true
-  // formModel = ref({...fromModel,...data})
+  //设置酒店信息
   formModel.value = { ...formModel.value, ...data }
-  console.log(formModel.value)
+  //获取房型信息
+  getRoomInfo()
 }
+//对话框显隐
 const centerDialogVisible = ref(false)
-const submitForm = () => {
-  // 提交表单前，将日期范围的值分别赋值给 checkin_time 和 checkout_time
-  if (formModel.value.datetimeRange.length === 2) {
-    formModel.value.checkin_time = formModel.value.datetimeRange[0]
-    formModel.value.checkout_time = formModel.value.datetimeRange[1]
-    // 然后你可以继续执行表单提交的逻辑...
-  }
+//提交表单（支付按钮）
+const submitForm = async () => {
+  //等待校验
+  await formRef.value.validate()
+  //打开支付对话框
   centerDialogVisible.value = true
-  // showSuccessToast('登录成功！')
 }
 
-const onPay = (isPay) => {
+const onPay = async (isPay) => {
   centerDialogVisible.value = false
   if (isPay) {
-    formModel.value.status = '已支付'
+    //预定成功关闭抽屉
+    visibleDrawer.value = false
+    //提交预定
+    const res = await hotelBookingService({
+      hotelId: formModel.value.id,
+      roomId: formModel.value.room_id,
+      checkinTime: formModel.value.datetimeRange[0],
+      checkoutTime: formModel.value.datetimeRange[1],
+      occupier_name: formModel.value.occupier_name,
+      occupier_phone: formModel.value.occupier_phone,
+      roomNum: formModel.value.room_num,
+      cost: formModel.value.cost
+    })
     showSuccessToast({
-      message: '支付成功！',
+      message: res.data.message,
       style: {
         backgroundColor: 'rgba(255, 254, 215, 0.897)',
         color: '#666'
       }
     })
   } else {
-    formModel.value.status = '待支付'
     showFailToast({
-      message: '支付失败！',
+      message: '预定取消',
       style: {
         backgroundColor: 'rgba(255, 254, 215, 0.897)',
         color: '#666'
       }
     })
   }
-  visibleDrawer.value = false
 }
-
+//获取房型信息
+const getRoomInfo = async () => {
+  const res = await hotelRoomService({
+    id: formModel.value.id,
+    checkIn: formModel.value.datetimeRange[0],
+    checkOut: formModel.value.datetimeRange[1]
+  })
+  rooms.value = res.data.data
+}
+//日期计算函数，输入两个yyyy-mm-dd格式的日期，返回相差的天数
+const getDayTime = (dateArr) => {
+  const dt1 = new Date(dateArr[0])
+  const dt2 = new Date(dateArr[1])
+  // 计算时间差的毫秒数
+  const diffInMs = Math.abs(dt2 - dt1)
+  // 将毫秒数转换为天数
+  const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24))
+  return diffInDays
+}
 defineExpose({ open })
 </script>
 
@@ -173,19 +169,21 @@ defineExpose({ open })
         />
       </el-form-item>
       <el-form-item label="房型">
-        <el-select v-model="formModel.room_id">
+        <el-select v-model="formModel.room_id" placeholder=" ">
           <el-option
-            v-for="room in formModel.rooms"
+            v-for="room in rooms"
             :key="room.id"
-            :label="room.type"
+            :label="room.roomType"
             :value="room.id"
           >
             <template #default>
-              <span>{{ room.type }}</span>
+              <span>{{ room.roomType }}</span>
               <span style="margin-left: 50px"
-                >剩余房间数量: {{ room.maxNum }}</span
+                >剩余房间数量: {{ room.unusedNumber }}</span
               >
-              <span style="margin-left: 50px">价格：{{ room.price }}元</span>
+              <span style="margin-left: 50px"
+                >价格：{{ room.roomPrice }}元</span
+              >
             </template>
           </el-option>
         </el-select>
@@ -238,13 +236,17 @@ defineExpose({ open })
 body :deep(.van-toast) {
   background-color: #fff !important;
 }
+
 :deep(.el-form-item__label) {
   color: #fff;
   margin-right: 10px;
 }
+
 .el-form-item {
-  margin-bottom: 30px; /* 根据需要调整间隔大小 */
+  margin-bottom: 30px;
+  /* 根据需要调整间隔大小 */
 }
+
 .avatar-uploader {
   :deep() {
     .avatar {
@@ -252,6 +254,7 @@ body :deep(.van-toast) {
       height: 178px;
       display: block;
     }
+
     .el-upload {
       border: 1px dashed var(--el-border-color);
       border-radius: 6px;
@@ -260,9 +263,11 @@ body :deep(.van-toast) {
       overflow: hidden;
       transition: var(--el-transition-duration-fast);
     }
+
     .el-upload:hover {
       border-color: var(--el-color-primary);
     }
+
     .el-icon.avatar-uploader-icon {
       font-size: 28px;
       color: #8c939d;
@@ -272,25 +277,32 @@ body :deep(.van-toast) {
     }
   }
 }
+
 .editor {
   width: 100%;
+
   :deep(.ql-editor) {
     min-height: 200px;
   }
 }
+
 .reserve-price {
   padding: 20px;
   font-size: 20px;
 }
+
 .reserve-price {
   color: #bd0000;
 }
+
 .block {
   width: 100%;
+
   .picker {
     width: 100%;
   }
 }
+
 .demo-datetime-picker {
   display: flex;
   width: 100%;
@@ -299,10 +311,12 @@ body :deep(.van-toast) {
   justify-content: space-around;
   align-items: stretch;
 }
+
 .demo-datetime-picker .block {
   padding: 30px 0;
   text-align: center;
 }
+
 .line {
   width: 1px;
   background-color: var(--el-border-color);
