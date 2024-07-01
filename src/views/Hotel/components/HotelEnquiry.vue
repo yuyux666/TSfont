@@ -42,7 +42,11 @@ onMounted(() => {
 //抽屉逻辑(用户预定)
 const bookingRef = ref(null)
 const onAddBooking = (item) => {
-  bookingRef.value.open({ id: item.id, hotelName: item.hotelName })
+  bookingRef.value.open({
+    id: item.id,
+    hotelName: item.hotelName,
+    datetimeRange: formModel.value.datetimeRange
+  })
 }
 
 //分页获取酒店列表

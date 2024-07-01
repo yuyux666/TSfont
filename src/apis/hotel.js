@@ -25,6 +25,16 @@ export const hotelDetailService = ({
     params: { roomId, hotelId, checkinTime, checkoutTime }
   })
 
-// 游客提交预定表单
-export const hotelBookingService = (data) =>
-  request.post('/hotel/booking', data)
+//查看酒店房型信息
+export const hotelRoomService = ({ id, checkIn, checkOut }) => {
+  return request.get(`/hotel/${id}`, {
+    params: {
+      checkIn,
+      checkOut
+    }
+  })
+}
+//预定酒店
+export const hotelBookingService = (data) => {
+  return request.post('/hotel/booking', data)
+}
