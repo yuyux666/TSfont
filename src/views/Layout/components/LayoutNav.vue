@@ -20,7 +20,10 @@ const onLogOut = () => {
       <ul>
         <template v-if="userStore.token">
           <li>
-            <a href="javascript:;"><i class="iconfont icon-user"></i>周杰伦</a>
+            <a href="javascript:;"
+              ><i class="iconfont icon-user"></i
+              >{{ userStore.user.username }}</a
+            >
           </li>
           <li>
             <el-popconfirm

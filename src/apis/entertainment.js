@@ -16,7 +16,8 @@ export const RecreationProjectDetailService = (id) =>
   request.get(`/activity/entertainment/${id}`)
 
 // 查看全部演出
-export const PerformanceListService = () => request.get('/activity/performance')
+export const PerformanceListService = (data) =>
+  request.get('/activity/performance', { params: data })
 
 // 查看指定演出详情
 export const PerformanceDetailService = (id) =>

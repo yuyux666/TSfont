@@ -161,6 +161,7 @@ const login = async () => {
   userStore.setToken(res.data.message)
   // userStore.setUserName(formModel.username)
   // ElMessage.success('登录成功！')
+  userStore.getUser()
   showSuccessToast({
     message: '登录成功！',
     style: {

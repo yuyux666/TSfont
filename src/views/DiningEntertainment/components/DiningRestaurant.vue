@@ -4,7 +4,7 @@ import ScenePanel from '@/views/Common/ScenePanel.vue'
 
 import { ref } from 'vue'
 import { DiningRoomListService } from '@/apis/entertainment'
-const value = ref([20, 100])
+// const value = ref([20, 100])
 
 const catering = ref([])
 const getDiningList = async () => {
@@ -18,8 +18,8 @@ getDiningList()
   <div class="mycontainer">
     <div class="search">
       <el-form inline class="dining-search">
-        <el-form-item label="价格筛选">
-          <!-- Vue3中 v-model是 :modelValue和@update:modelValue的简写 -->
+        <el-form-item label="价格：">
+          <!-- Vue3中 v-model是 :modelValue和@update:modelValue的简写
           <div class="slider-demo-block" style="width: 300px">
             <el-slider
               v-model="value"
@@ -28,7 +28,14 @@ getDiningList()
               :max="500"
               :show-tooltip="true"
             />
-          </div>
+          </div> -->
+          <el-input
+            v-model="input"
+            style="width: 240px"
+            :placeholder="`输入期望的最低价`"
+            clearable
+            @clear="clearInput"
+          />
         </el-form-item>
         <el-form-item label="餐馆名：">
           <el-input

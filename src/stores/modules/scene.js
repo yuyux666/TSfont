@@ -2,8 +2,8 @@ import { SceneListService } from '@/apis/scene'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const useEmergencyStore = defineStore(
-  'emergency',
+export const useSceneStore = defineStore(
+  'scene',
   () => {
     const attractionsList = ref([])
     const getEmergency = async (id) => {

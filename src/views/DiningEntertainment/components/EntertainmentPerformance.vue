@@ -1,10 +1,23 @@
 <script setup>
 import ScenePanel from '@/views/Common/ScenePanel.vue'
 import PerformanceItem from '../extended/PerformanceItem.vue'
+// import { formatTime } from '@/utils/format'
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { PerformanceListService } from '@/apis/entertainment'
-const value = ref([20, 100])
+// const value = ref([20, 100])
+// const value2 = formatTime(new Date())
+// 搜索表单
+const performanceForm = {
+  groupName: '',
+  performanceName: '',
+  performanceType: '',
+  dateTime: ''
+}
+
+const searchForm = ref({
+  ...performanceForm
+})
 
 const performances = ref([])
 
@@ -14,28 +27,63 @@ const getPerformanceList = async () => {
   performances.value = res.data.data
 }
 getPerformanceList()
+watch(
+  searchForm,
+  async (newVal, oldVal) => {
+    if (
+      newVal.groupName !== oldVal.groupName ||
+      newVal.performanceName !== oldVal.performanceName ||
+      newVal.performanceType !== oldVal.performanceType ||
+      newVal.dateTime !== oldVal.dateTime
+    ) {
+      await getPerformanceList(searchForm.value)
+    }
+  },
+  {
+    deep: true, // 因为我们是在监听一个对象，所以需要深度监听
+    immediate: false // 不需要立即执行，除非你想在组件加载时立即发起请求
+  }
+)
 </script>
 <template>
   <div class="mycontainer">
     <div class="search">
-      <el-form inline class="dining-search">
-        <el-form-item label="价格筛选">
-          <!-- Vue3中 v-model是 :modelValue和@update:modelValue的简写 -->
-          <div class="slider-demo-block" style="width: 300px">
-            <el-slider
-              v-model="value"
-              range
-              show-stops
-              :max="500"
-              :show-tooltip="true"
+      <el-form inline class="dining-search" :model="searchForm">
+        <el-form-item label="日期选择">
+          <div class="block">
+            <el-date-picker
+              v-model="searchForm.dateTime"
+              type="date"
+              style="width: 120px"
+              placeholder="请选择观看演出的日期"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
             />
           </div>
         </el-form-item>
-        <el-form-item label="演出团体名：">
+        <el-form-item label="演出团体：">
           <el-input
-            v-model="input"
-            style="width: 240px"
-            :placeholder="`搜索演出团体名...`"
+            v-model="searchForm.groupName"
+            style="width: 130px"
+            :placeholder="`搜索演出团体...`"
+            clearable
+            @clear="clearInput"
+          />
+        </el-form-item>
+        <el-form-item label="演出名：">
+          <el-input
+            v-model="searchForm.performanceName"
+            style="width: 130px"
+            :placeholder="`搜索演出...`"
+            clearable
+            @clear="clearInput"
+          />
+        </el-form-item>
+        <el-form-item label="演出种类：">
+          <el-input
+            v-model="searchForm.performanceType"
+            style="width: 130px"
+            :placeholder="`搜索演出种类...`"
             clearable
             @clear="clearInput"
           />
@@ -61,10 +109,31 @@ getPerformanceList()
 </template>
 
 <style lang="scss" scoped>
-.mycontainer ::v-deep .el-form-item__label {
+.mycontainer :deep(.el-form-item__label) {
   color: #fff;
 }
 .mycontainer {
+  .demo-datetime-picker {
+    display: flex;
+    width: 100%;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+  .demo-datetime-picker .block {
+    padding: 30px 0;
+    text-align: center;
+    border-right: solid 1px var(--el-border-color);
+    flex: 1;
+  }
+  .demo-datetime-picker .block:last-child {
+    border-right: none;
+  }
+  .demo-datetime-picker .demonstration {
+    display: block;
+    color: var(--el-text-color-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
   .search {
     display: flex;
     justify-content: end;

@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-// import { getEmergencyList } from '@/apis/emergency'
-import { useEmergencyStore } from '@/stores'
+import { getEmergencyList } from '@/apis/emergency'
+// import { useEmergencyStore } from '@/stores'
 
-const emergencyStore = useEmergencyStore()
+// const emergencyStore = useEmergencyStore()
 const dialogFormVisible = ref(false)
 // 分页逻辑
 const articleList = ref([])
@@ -16,10 +16,11 @@ const params = ref({
 // 获取应急信息列表
 const getEmergency = async () => {
   // 接口请求
-  await emergencyStore.getEmergency(params.value)
+  // emergencyStore.getEmergency(params.value)
   // 更新数据
-  articleList.value = emergencyStore.emergencyList
-  total.value = emergencyStore.total
+  const res = await getEmergencyList(params.value)
+  articleList.value = res.data.data.records
+  total.value = res.data.data.total
 }
 getEmergency()
 
@@ -56,9 +57,9 @@ const onCurrentChange = (page) => {
         <li class="emergency-item" v-for="item in articleList" :key="item.id">
           <el-link @click="showArticleContent(item)">{{ item.title }}</el-link>
           <div class="pubilsh">
-            <span>发布时间：{{ item.releaseDate }} </span>|<span>
-              发布人：XXX</span
-            >
+            <span>发布时间：{{ item.releaseDate }} </span>
+            <i style="margin: 15px; color: #fffed7">|</i>
+            <span> 发布人：{{ item.publisher }}</span>
           </div>
         </li>
       </ul>
@@ -68,8 +69,11 @@ const onCurrentChange = (page) => {
       >
         <div class="publish-header">{{ selectedArticle.title }}</div>
         <div class="publish-information">
-          <span>发布时间：{{ selectedArticle.releaseDate }} |</span>
-          <span> 发布人：XXX</span>
+          <span style="margin-right: 10px"
+            >发布时间：{{ selectedArticle.releaseDate }}
+          </span>
+          <i style="margin: 15px; color: #fffed7">|</i>
+          <span> 发布人：{{ selectedArticle.publisher }}</span>
         </div>
         <p class="publish-content">
           {{ selectedArticle.content }}
