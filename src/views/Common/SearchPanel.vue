@@ -1,31 +1,38 @@
 <script setup>
 import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
+import { SceneByIdService } from '@/apis/scene'
 defineProps({
   title: {
     type: String
   }
 })
-const input = ref('')
+const searchForm = ref({
+  id: ''
+})
+const searchScene = ref([])
+const searchStatus = ref(false)
+const search = async () => {
+  if (searchForm.value.id !== '') {
+    searchStatus.value = true
+    console.log('search')
+  }
+  const res = await SceneByIdService(searchForm.value.id)
+  console.log(res)
+  searchScene.value = res.data.data
+}
 
 // 查询景点
 const clearInput = () => {
   searchStatus.value = false
   console.log('clear')
 }
-const searchStatus = ref(false)
-const search = () => {
-  if (input.value !== '') {
-    searchStatus.value = true
-    console.log('search')
-  }
-}
 </script>
 <template>
   <div class="search">
     <div class="search-header">
       <el-input
-        v-model="input"
+        v-model="searchForm.id"
         style="width: 240px"
         :placeholder="`搜索${title}...`"
         clearable
@@ -34,7 +41,49 @@ const search = () => {
       <el-button type="primary" :icon="Search" @click="search"></el-button>
     </div>
     <div class="search-body" :class="{ 'search-body-show': searchStatus }">
-      <slot></slot>
+      <el-row class="search-page">
+        <el-col :span="8" class="left">
+          <span v-if="searchScene.scenicId === 1" class="Big-title"
+            >长坪沟</span
+          >
+          <span v-if="searchScene.scenicId === 1" class="Big-price"
+            >门票价格：120元</span
+          >
+          <span v-if="searchScene.scenicId === 1" class="Big-time"
+            >开放时间：8:00-15:00</span
+          >
+
+          <span v-if="searchScene.scenicId === 2" class="Big-title"
+            >双桥沟</span
+          >
+          <span v-if="searchScene.scenicId === 2" class="Big-price"
+            >门票价格：150元</span
+          >
+          <span v-if="searchScene.scenicId === 2" class="Big-time"
+            >开放时间：8:00-15:00</span
+          >
+
+          <span v-if="searchScene.scenicId === 3" class="Big-title"
+            >海子沟</span
+          >
+          <span v-if="searchScene.scenicId === 3" class="Big-price"
+            >门票价格：180元</span
+          >
+          <span v-if="searchScene.scenicId === 3" class="Big-time"
+            >开放时间：8:00-15:00</span
+          >
+        </el-col>
+        <el-col :span="16" class="right">
+          <span class="small-title">{{ searchScene.poiName }}</span>
+          <img :src="searchScene.picture" alt="" />
+          <span class="small-info">
+            <p class="small-desc">
+              {{ searchScene.poiDescription }}
+            </p>
+            <p class="small-altitude">开放时间：{{ searchScene.openTime }}</p>
+          </span>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>

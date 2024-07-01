@@ -3,47 +3,102 @@ import ScenePanel from '@/views/Common/ScenePanel.vue'
 import PerformanceItem from '../extended/PerformanceItem.vue'
 // import { formatTime } from '@/utils/format'
 
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { PerformanceListService } from '@/apis/entertainment'
 // const value = ref([20, 100])
 // const value2 = formatTime(new Date())
 // 搜索表单
-const performanceForm = {
+// const performanceForm = {
+//   groupName: '',
+//   performanceName: '',
+//   performanceType: '',
+//   dateTime: ''
+// }
+const total = ref(0)
+// 定义请求参数对象
+const params = ref({
+  page: 1,
+  pageSize: 5
+})
+
+const searchForm = ref({
   groupName: '',
   performanceName: '',
   performanceType: '',
-  dateTime: ''
-}
-
-const searchForm = ref({
-  ...performanceForm
+  dateTime: '',
+  ...params.value
 })
 
 const performances = ref([])
 
-const getPerformanceList = async () => {
-  const res = await PerformanceListService()
-  console.log(res)
-  performances.value = res.data.data
+const getPerformanceList = async (data) => {
+  console.log(searchForm.value)
+  const res = await PerformanceListService(data)
+  console.log('返回' + res)
+  performances.value = res.data.data.records
+  total.value = res.data.data.total
 }
 getPerformanceList()
-watch(
-  searchForm,
-  async (newVal, oldVal) => {
-    if (
-      newVal.groupName !== oldVal.groupName ||
-      newVal.performanceName !== oldVal.performanceName ||
-      newVal.performanceType !== oldVal.performanceType ||
-      newVal.dateTime !== oldVal.dateTime
-    ) {
-      await getPerformanceList(searchForm.value)
+// 处理分页逻辑
+const onSizeChange = (size) => {
+  console.log(size)
+  // 重新更改每页条数时
+  // 重新第一页渲染
+  params.value.page = 1
+  params.value.pageSize = size
+  getPerformanceList(searchForm.value)
+}
+const onCurrentChange = (page) => {
+  // 更新当前页
+  params.value.page = page
+  getPerformanceList(searchForm.value)
+}
+const onSearch = () => {
+  console.log(searchForm)
+  params.value.page = 1
+  getPerformanceList(searchForm.value)
+  showSuccessToast({
+    message: '搜索成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
     }
-  },
-  {
-    deep: true, // 因为我们是在监听一个对象，所以需要深度监听
-    immediate: false // 不需要立即执行，除非你想在组件加载时立即发起请求
+  })
+}
+const onReset = () => {
+  params.value.page = 1
+  searchForm.value = {
+    name: '',
+    avgPrice: '',
+    ...params.value
   }
-)
+  showSuccessToast({
+    message: '重置成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
+    }
+  })
+  getPerformanceList(searchForm.value)
+}
+
+// watch(
+//   searchForm,
+//   async (newVal, oldVal) => {
+//     if (
+//       newVal.groupName !== oldVal.groupName ||
+//       newVal.performanceName !== oldVal.performanceName ||
+//       newVal.performanceType !== oldVal.performanceType ||
+//       newVal.dateTime !== oldVal.dateTime
+//     ) {
+//       await getPerformanceList(searchForm.value)
+//     }
+//   },
+//   {
+//     deep: true, // 因为我们是在监听一个对象，所以需要深度监听
+//     immediate: false // 不需要立即执行，除非你想在组件加载时立即发起请求
+//   }
+// )
 </script>
 <template>
   <div class="mycontainer">
@@ -103,7 +158,19 @@ watch(
             </li>
           </ul>
         </div>
+        <!-- 分页 -->
       </ScenePanel>
+      <el-pagination
+        v-model:current-page="params.page"
+        v-model:page-size="params.pageSize"
+        :page-sizes="[2, 3, 5, 10]"
+        :background="true"
+        layout="jumper, total, sizes, prev, pager, next"
+        :total="total"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        style="margin-top: 50px; justify-content: flex-end"
+      />
     </div>
   </div>
 </template>

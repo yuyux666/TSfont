@@ -1,8 +1,8 @@
 <script setup>
 import SceneItem from '@/views/Common/SceneItem.vue'
 import ScenePanel from '@/views/Common/ScenePanel.vue'
-import { ref } from 'vue'
-
+import { SceneListService } from '@/apis/scene'
+import { ref, onMounted } from 'vue'
 const attractions = ref([
   {
     id: 3,
@@ -21,6 +21,15 @@ const attractions = ref([
     ]
   }
 ])
+const HaiziList = ref([])
+const getShuangqiaoList = async () => {
+  const res3 = await SceneListService(3)
+  HaiziList.value = res3.data.data
+  attractions.value[0].scenes = HaiziList.value
+}
+onMounted(() => {
+  getShuangqiaoList()
+})
 </script>
 <template>
   <div class="mycontainer">

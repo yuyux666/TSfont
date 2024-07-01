@@ -95,8 +95,7 @@ const getCode = async () => {
   // console.log(formModel)
   if (formModel.second === formModel.totalSecond) {
     // 开始倒计时
-    const res = await userSendCodeService(formModel.phoneNumber)
-    console.log('验证码为' + res)
+    await userSendCodeService(formModel.phoneNumber)
     // ElMessage.success('验证码发送成功！')
     showSuccessToast('验证码发送成功！')
     // 倒计时

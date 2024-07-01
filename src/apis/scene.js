@@ -7,6 +7,8 @@ export const SceneAppointListService = (id) =>
 // 根据大景点查询
 export const SceneListService = (id) => request.get(`/attractions/scenic/${id}`)
 
+// 按照id查询景点
+export const SceneByIdService = (id) => request.get(`/attractions/poi/${id}`)
 // 查询具体景点
 export const SceneDetailService = (id) =>
   request.get(`/scenic/sight/index/${id}`)

@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <div class="performance-item">
-    <img v-img-lazy="performance.picture" alt="" />
+    <img :src="performance.pictureUrl" alt="" />
     <p class="name ellipsis">{{ performance.performanceName }}</p>
 
     <div class="content">

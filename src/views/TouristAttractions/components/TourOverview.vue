@@ -1,9 +1,10 @@
 <script setup>
+import { SceneListService } from '@/apis/scene'
 import SceneItem from '@/views/Common/SceneItem.vue'
 import ScenePanel from '@/views/Common/ScenePanel.vue'
 import SearchPanel from '@/views/Common/SearchPanel.vue'
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const attractions = ref([
   {
@@ -11,80 +12,14 @@ const attractions = ref([
     title: '双桥沟',
     subtitle: '很美',
     price: '100',
-    scenes: [
-      {
-        id: 1001,
-        name: '测试景点',
-        altitude: '3000',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '测试商品描述'
-      },
-      {
-        id: 1002,
-        name: '测试景点',
-        altitude: '1100',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '测试商品描述'
-      },
-      {
-        id: 1003,
-        name: '测试景点',
-        altitude: '1200',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '测试商品描述'
-      },
-      {
-        id: 1004,
-        name: '测试景点',
-        altitude: '1400',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '测试商品描述'
-      },
-      {
-        id: 1005,
-        name: '测试景点',
-        altitude: '1500',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '测试商品描述'
-      },
-      {
-        id: 1006,
-        name: '测试景点',
-        altitude: '1080',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '测试商品描述'
-      },
-      {
-        id: 1007,
-        name: '枯树滩',
-        altitude: '3470',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '相传枯树滩是阿巴朗依与墨尔多家族交战的遗迹，因地质灾害导致河流改道，淹没大片原始树木，枯死的沙棘、杂木钙化后留下一片树桩置于河滩，故称“枯树滩”'
-      }
-    ]
+    scenes: []
   },
   {
     id: 2,
     title: '长坪沟',
     subtitle: '最美',
     price: '100',
-    scenes: [
-      {
-        id: 2001,
-        name: '枯树滩',
-        altitude: '3470',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '相传枯树滩是阿巴朗依与墨尔多家族交战的遗迹，因地质灾害导致河流改道，淹没大片原始树木，枯死的沙棘、杂木钙化后留下一片树桩置于河滩，故称“枯树滩”'
-      }
-    ]
+    scenes: []
   },
   {
     id: 3,
@@ -92,43 +27,39 @@ const attractions = ref([
     subtitle: '超美',
     price: '100',
     scenes: [
-      {
-        id: 3001,
-        name: '测试商品',
-        altitude: '100',
-        picture:
-          'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
-        desc: '测试商品描述'
-      }
+      // {
+      //   id: 3001,
+      //   name: '测试商品',
+      //   altitude: '100',
+      //   picture:
+      //     'https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067',
+      //   desc: '测试商品描述'
+      // }
     ]
   }
 ])
+const ShuangqiaoList = ref([])
+const ChangpingList = ref([])
+const HaiziList = ref([])
+const getShuangqiaoList = async () => {
+  const res1 = await SceneListService(1)
+  const res2 = await SceneListService(2)
+  const res3 = await SceneListService(3)
+  ChangpingList.value = res1.data.data
+  ShuangqiaoList.value = res2.data.data
+  HaiziList.value = res3.data.data
+  attractions.value[0].scenes = ShuangqiaoList.value
+  attractions.value[1].scenes = ChangpingList.value
+  attractions.value[2].scenes = HaiziList.value
+}
+onMounted(() => {
+  getShuangqiaoList()
+})
 </script>
 <template>
   <div class="mycontainer">
     <div class="search">
-      <SearchPanel title="景点">
-        <el-row class="search-page">
-          <el-col :span="8" class="left">
-            <span class="Big-title">双桥沟</span>
-            <span class="Big-price">门票价格：150元</span>
-            <span class="Big-time">开放时间：8:00-15:00</span>
-          </el-col>
-          <el-col :span="16" class="right">
-            <span class="small-title">人参果坪</span>
-            <img
-              src="https://img1.baidu.com/it/u=4196911048,1331054262&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=1067"
-              alt=""
-            />
-            <span class="small-info">
-              <p class="small-desc">
-                人参果坪是双桥沟冰川地貌的终点。公路外侧有数百亩大草甸，春夏季节，各种高山花卉布满草坪，好似一个色彩缤纷、沁人心脾的巨大花篮
-              </p>
-              <p class="small-altitude">海拔：3300</p>
-            </span>
-          </el-col>
-        </el-row>
-      </SearchPanel>
+      <SearchPanel title="景点"> </SearchPanel>
     </div>
     <div class="Tour-scenes">
       <ScenePanel

@@ -1,7 +1,8 @@
 <script setup>
 import SceneItem from '@/views/Common/SceneItem.vue'
 import ScenePanel from '@/views/Common/ScenePanel.vue'
-import { ref } from 'vue'
+import { SceneListService } from '@/apis/scene'
+import { ref, onMounted } from 'vue'
 
 const attractions = ref([
   {
@@ -61,6 +62,18 @@ const attractions = ref([
     ]
   }
 ])
+const ShuangqiaoList = ref([])
+
+const getShuangqiaoList = async () => {
+  const res2 = await SceneListService(2)
+
+  ShuangqiaoList.value = res2.data.data
+
+  attractions.value[0].scenes = ShuangqiaoList.value
+}
+onMounted(() => {
+  getShuangqiaoList()
+})
 </script>
 <template>
   <div class="mycontainer">

@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <div class="entertainment-item">
-    <img v-img-lazy="entertainment.picture" alt="" />
+    <img :src="entertainment.pictureUrl" alt="" />
     <p class="name ellipsis">{{ entertainment.projectName }}</p>
 
     <div class="content">

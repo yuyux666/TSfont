@@ -6,34 +6,77 @@ import { ref } from 'vue'
 import { RecreationProjectListService } from '@/apis/entertainment'
 // const value = ref([20, 100])
 
-const entertainments = ref([
-  {
-    id: 1,
-    project_name: '骑马',
-    project_location: '斯古拉文旅城',
-    picture:
-      'https://img1.baidu.com/it/u=3086382144,3957872787&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=752',
-    description: '歌舞表演',
-    avg_consumption: '200',
-    ticket_price: '150',
-    entertainment_start: '19:00',
-    entertainment_end: '21:00'
-  }
-])
-const getEntertainmentList = async () => {
-  const res = await RecreationProjectListService()
+const entertainments = ref([])
+const total = ref(0)
+// 定义请求参数对象
+const params = ref({
+  page: 1,
+  pageSize: 5
+})
+const searchForm = ref({
+  name: '',
+  ...params.value
+})
+
+const getEntertainmentList = async (data) => {
+  console.log(searchForm.value)
+  const res = await RecreationProjectListService(data)
   console.log(res)
-  entertainments.value = res.data.data
+  entertainments.value = res.data.data.records
+  total.value = res.data.data.total
 }
 getEntertainmentList()
+// 处理分页逻辑
+const onSizeChange = (size) => {
+  console.log(size)
+  // 重新更改每页条数时
+  // 重新第一页渲染
+  params.value.page = 1
+  params.value.pageSize = size
+  getEntertainmentList(searchForm.value)
+}
+const onCurrentChange = (page) => {
+  // 更新当前页
+  params.value.page = page
+  getEntertainmentList(searchForm.value)
+}
+const onSearch = () => {
+  console.log(111)
+  console.log(searchForm)
+  params.value.page = 1
+  getEntertainmentList(searchForm.value)
+  showSuccessToast({
+    message: '搜索成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
+    }
+  })
+}
+const onReset = () => {
+  params.value.page = 1
+  searchForm.value = {
+    name: '',
+    avgPrice: '',
+    ...params.value
+  }
+  showSuccessToast({
+    message: '重置成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
+    }
+  })
+  getEntertainmentList(searchForm.value)
+}
 </script>
 <template>
   <div class="mycontainer">
     <div class="search">
-      <el-form inline class="dining-search">
+      <el-form inline class="dining-search" :model="searchForm">
         <el-form-item label="娱乐项目名：">
           <el-input
-            v-model="input"
+            v-model="searchForm.name"
             style="width: 240px"
             :placeholder="`搜索娱乐项目...`"
             clearable
@@ -56,6 +99,17 @@ getEntertainmentList()
           </ul>
         </div>
       </ScenePanel>
+      <el-pagination
+        v-model:current-page="params.page"
+        v-model:page-size="params.pageSize"
+        :page-sizes="[2, 3, 5, 10]"
+        :background="true"
+        layout="jumper, total, sizes, prev, pager, next"
+        :total="total"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        style="margin-top: 50px; justify-content: flex-end"
+      />
     </div>
   </div>
 </template>

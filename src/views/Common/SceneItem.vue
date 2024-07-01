@@ -10,9 +10,9 @@ defineProps({
 <template>
   <RouterLink to="/" class="scenes-item">
     <img v-img-lazy="scene.picture" alt="" />
-    <p class="name ellipsis">{{ scene.name }}</p>
-    <p class="desc ellipsis">{{ scene.desc }}</p>
-    <p class="altitude">海拔：{{ scene.altitude }}</p>
+    <p class="name ellipsis">{{ scene.poiName }}</p>
+    <p class="desc ellipsis">{{ scene.poiDescription }}</p>
+    <p class="altitude">是否开放：{{ scene.openTime }}</p>
   </RouterLink>
 </template>
 

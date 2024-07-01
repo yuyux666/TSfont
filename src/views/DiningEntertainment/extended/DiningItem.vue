@@ -9,7 +9,8 @@ defineProps({
 
 <template>
   <div class="restaurant-item">
-    <img v-img-lazy="restaurant.promotionalImage" alt="" />
+    <img :src="restaurant.promotionalImage" alt="" />
+    <!-- <img v-img-lazy="restaurant.promotionalImage" alt="" /> -->
     <p class="name ellipsis">{{ restaurant.storeName }}</p>
 
     <div class="content">

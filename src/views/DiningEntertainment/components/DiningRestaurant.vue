@@ -5,19 +5,71 @@ import ScenePanel from '@/views/Common/ScenePanel.vue'
 import { ref } from 'vue'
 import { DiningRoomListService } from '@/apis/entertainment'
 // const value = ref([20, 100])
-
+const total = ref(0)
+// 定义请求参数对象
+const params = ref({
+  page: 1,
+  pageSize: 5
+})
+const searchForm = ref({
+  name: '',
+  avgPrice: '',
+  ...params.value
+})
 const catering = ref([])
-const getDiningList = async () => {
-  const res = await DiningRoomListService()
+const getDiningList = async (data) => {
+  const res = await DiningRoomListService(data)
   console.log(res)
-  catering.value = res.data.data
+  catering.value = res.data.data.records
+  total.value = res.data.data.total
 }
 getDiningList()
+// 处理分页逻辑
+const onSizeChange = (size) => {
+  // 重新更改每页条数时
+  // 重新第一页渲染
+  params.value.page = 1
+  params.value.pageSize = size
+  getDiningList(searchForm.value)
+}
+const onCurrentChange = (page) => {
+  // 更新当前页
+  params.value.page = page
+  getDiningList(searchForm.value)
+}
+const onSearch = () => {
+  console.log(searchForm)
+  params.value.page = 1
+  getDiningList(searchForm.value)
+  showSuccessToast({
+    message: '搜索成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
+    }
+  })
+}
+const onReset = () => {
+  params.value.page = 1
+  searchForm.value = {
+    name: '',
+    avgPrice: '',
+    ...params.value
+  }
+  showSuccessToast({
+    message: '重置成功！',
+    style: {
+      backgroundColor: 'rgba(255, 254, 215, 0.897)',
+      color: '#666'
+    }
+  })
+  getDiningList(searchForm.value)
+}
 </script>
 <template>
   <div class="mycontainer">
     <div class="search">
-      <el-form inline class="dining-search">
+      <el-form inline class="dining-search" :model="searchForm">
         <el-form-item label="价格：">
           <!-- Vue3中 v-model是 :modelValue和@update:modelValue的简写
           <div class="slider-demo-block" style="width: 300px">
@@ -30,7 +82,7 @@ getDiningList()
             />
           </div> -->
           <el-input
-            v-model="input"
+            v-model="searchForm.avgPrice"
             style="width: 240px"
             :placeholder="`输入期望的最低价`"
             clearable
@@ -39,7 +91,7 @@ getDiningList()
         </el-form-item>
         <el-form-item label="餐馆名：">
           <el-input
-            v-model="input"
+            v-model="searchForm.name"
             style="width: 240px"
             :placeholder="`搜索餐馆名...`"
             clearable
@@ -62,6 +114,17 @@ getDiningList()
           </ul>
         </div>
       </ScenePanel>
+      <el-pagination
+        v-model:current-page="params.page"
+        v-model:page-size="params.pageSize"
+        :page-sizes="[2, 3, 5, 10]"
+        :background="true"
+        layout="jumper, total, sizes, prev, pager, next"
+        :total="total"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        style="margin-top: 50px; justify-content: flex-end"
+      />
     </div>
   </div>
 </template>
