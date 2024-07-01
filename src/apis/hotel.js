@@ -38,3 +38,10 @@ export const hotelRoomService = ({ id, checkIn, checkOut }) => {
 export const hotelBookingService = (data) => {
   return request.post('/hotel/booking', data)
 }
+
+//获取订单
+export const hotelOrderService = ({ pageNum, pageSize }) => {
+  return request.get('/user/order/index', {
+    params: { pageNum, pageSize }
+  })
+}
